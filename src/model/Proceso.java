@@ -11,6 +11,9 @@ public class Proceso {
     int tiempoEYS; // FINAL
     int tiempoEspera;
 
+    long tInitBurst = 0;
+    long tBurst = 0; // [0 - 100]
+
     public Proceso() {
     }
 
@@ -20,9 +23,12 @@ public class Proceso {
         this.estado = estado;
         this.modo = modo;
         this.prioridad = prioridad;
+
         this.tiempoEnEjecucion = tiempoEnEjecucion;
         this.tiempoEYS = tiempoEYS;
         this.tiempoEspera = tiempoEspera;
+        tBurst = (long) (Math.random() * 99 + 1);
+        tInitBurst = tBurst;
     }
 
     public int getPID() {
@@ -71,6 +77,29 @@ public class Proceso {
 
     public void setTiempoEspera(int tiempoEspera) {
         this.tiempoEspera = tiempoEspera;
+    }
+
+    public long gettInitBurst() {
+        return tInitBurst;
+    }
+
+    public void settInitBurst(long tInitBurst) {
+        this.tInitBurst = tInitBurst;
+    }
+
+    public long gettBurst() {
+        return tBurst;
+    }
+
+    public void settBurst(long tBurst) {
+        this.tBurst = tBurst;
+    }
+
+    @Override
+    public String toString() {
+        return "Proceso [PID=" + PID + ", estado=" + estado + ", modo=" + modo + ", prioridad=" + prioridad
+                + ", tBurst=" + tBurst + ", tiempoEYS=" + tiempoEYS + ", tiempoEnEjecucion=" + tiempoEnEjecucion
+                + ", tiempoEspera=" + tiempoEspera + "]";
     }
 
     // Método para bloquear y desbloquear estados.

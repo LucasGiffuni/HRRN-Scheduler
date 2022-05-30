@@ -18,12 +18,17 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Timer;
+
 import model.Proceso;
 
 public class ProcesoUI extends JPanel {
 
     Proceso proceso;
     List<Proceso> procesos = new ArrayList<Proceso>();
+    // List<ProcessChartUI> processUI = new ArrayList<ProcessChartUI>();
 
     final int HEIGHT = 200;
     JButton t = new JButton("tt");
@@ -38,25 +43,25 @@ public class ProcesoUI extends JPanel {
     }
 
     private void getProcesos() {
-        this.procesos.add(new Proceso(1, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(2, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(3, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(4, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "bloqueado", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(1, "BLOQUEADO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(2, "BLOQUEADO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(3, "BLOQUEADO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(4, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "EJECUCION", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
 
     }
 
@@ -105,14 +110,32 @@ public class ProcesoUI extends JPanel {
                 height = -height;
             }
 
-            g.setColor(new Color(1.0f, 1.0f, 1.0f, 0.5f));
-            g.fillRect(valueX, valueY, barWidth - 2, height);
-            g.setColor(Color.black);
-            g.drawRect(valueX, valueY, barWidth - 2, height);
+            switch (procesos.get(i).getEstado()) {
+                case "BLOQUEADO":
+                    g.setColor(Color.blue);
+                    break;
+                case "LISTO":
+                    g.setColor(Color.green);
+
+                    break;
+                case "EJECUCION":
+                    g.setColor(Color.red);
+
+                    break;
+
+                default:
+                    break;
+            }
+            int width = barWidth - 2;
+            
+
             int labelWidth = labelFontMetrics.stringWidth("Proceso" + i);
             x = i * barWidth + (barWidth - labelWidth) / 2;
             g.drawString("Proceso" + i, x, y);
+            
+          
         }
+
     }
 
     public Proceso getProceso() {
