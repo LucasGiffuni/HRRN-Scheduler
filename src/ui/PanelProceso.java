@@ -14,6 +14,8 @@ import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import javax.swing.event.MouseInputListener;
+
 import model.Proceso;
 
 public class PanelProceso extends JPanel {
@@ -44,6 +46,57 @@ public class PanelProceso extends JPanel {
      * Construye el panel
      */
     void initPanel() {
+
+
+        this.addMouseListener(new MouseInputListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // TODO Auto-generated method stub
+                System.out.println("PID proceso: " + proceso.getPID());
+                
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        });
+
+
+
         setAlignmentX(Component.LEFT_ALIGNMENT);
         setLayout(new BorderLayout());
 
@@ -87,23 +140,7 @@ public class PanelProceso extends JPanel {
 
         setSize(PPANCHO, PPALTO);
 
-        switch (this.proceso.getEstado()) {
-            case "BLOQUEADO":
-                setBackground(Color.blue);
-                break;
-            case "LISTO":
-                setBackground(Color.green);
-
-                break;
-            case "EJECUCION":
-                setBackground(Color.red);
-
-                break;
-
-            default:
-                break;
-        }
-        // setBackground(Color.pink);
+       
         setOpaque(true);
         add(pidLbl, "South");
     }

@@ -28,7 +28,7 @@ public class Ventana extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
 
-        cargarProcesos(); //Cargar procesos al panel de los procesos.
+        cargarProcesos(); // Cargar procesos al panel de los procesos.
         pn.setBounds(0, 200, this.getWidth(), 200);
         pn.setBackground(Color.LIGHT_GRAY);
 
@@ -38,27 +38,123 @@ public class Ventana extends JFrame {
         add(pn);
         init();
 
-        pack();
+        // pack();
 
     }
 
     private void init() {
-       for (Proceso proceso : procesos) {
+        for (Proceso proceso : procesos) {
             procesoPanel = new PanelProceso(proceso);
             pn.add(procesoPanel);
 
-       }
-
+        }
 
     }
 
     private void cargarProcesos() {
-        this.procesos.add(new Proceso(1, "LLEGADO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(2, "LLEGADO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(3, "BLOQUEADO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(4, "EJECUCION", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-        this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
-
+        int contador = 0;
+        for (int i = 0; i < 40; i++) {
+            this.procesos
+                    .add(new Proceso(contador, "LLEGADO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5));
+            contador++;
+        }
+        contador = 0;
+        /*
+         * this.procesos.add(new Proceso(1, "LLEGADO", "Kernel", 1, ((int)
+         * (Math.random() * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(2, "LLEGADO", "Kernel", 1, ((int)
+         * (Math.random() * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(3, "BLOQUEADO", "Kernel", 1, ((int)
+         * (Math.random() * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(4, "EJECUCION", "Kernel", 1, ((int)
+         * (Math.random() * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         * this.procesos.add(new Proceso(5, "LISTO", "Kernel", 1, ((int) (Math.random()
+         * * (10 - 1))) + 1, 2, 5));
+         */
     }
 
     public static void main(String args[]) {
