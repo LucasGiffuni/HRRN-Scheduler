@@ -14,6 +14,16 @@ public class Proceso {
     long tInitBurst = 0;
     long tBurst = 0; // [0 - 100]
 
+    long tLlegada = 0;
+
+    long tInicio = 0;
+
+    long tRespuesta = 0;
+
+    long tTotalVida = 0;
+    
+    long tTermina = 0;
+
     public Proceso() {
     }
 
@@ -97,7 +107,7 @@ public class Proceso {
 
     @Override
     public String toString() {
-        return "Proceso [PID=" + PID + ", estado=" + estado + ", modo=" + modo + ", prioridad=" + prioridad
+        return "Proceso [PID=" + PID + ", n estado=" + estado + ", modo=" + modo + ", prioridad=" + prioridad
                 + ", tBurst=" + tBurst + ", tiempoEYS=" + tiempoEYS + ", tiempoEnEjecucion=" + tiempoEnEjecucion
                 + ", tiempoEspera=" + tiempoEspera + "]";
     }
@@ -111,4 +121,35 @@ public class Proceso {
         }
     }
 
+    public synchronized void ejecutando(long tiempoActual) {
+
+        setEstado("ACTIVO");
+
+        if (tiempoActual == tLlegada) {
+            setEstado("LISTO");
+
+        }
+
+        if (tBurst == tInitBurst) {
+            setEstado("EJECUTADO");
+
+            tInicio = tiempoActual;
+            tRespuesta = tInicio - tLlegada;
+
+            if (tiempoEYS > 0) {
+                setEstado("BLOQUEADO");
+            }
+        }
+
+        if (getEstado().equals("BLOQUEADO") == false) {
+            tBurst--;
+        }
+
+        tTotalVida++;
+
+        if (tBurst == 0) {
+            setEstado("FINALIZADO");
+            tTermina = tiempoActual;
+        }
+    }
 }
