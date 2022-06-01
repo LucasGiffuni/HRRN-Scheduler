@@ -167,7 +167,7 @@ public class Proceso {
 
         
         if (!(getEstado().equals("FINALIZADO"))) {
-            setEstado("ACTIVO");
+            
             System.out.println("ESTADO PROCESO: " + getEstado());
 
             if (tiempoActual == tLlegada) {

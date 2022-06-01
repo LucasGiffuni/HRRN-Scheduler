@@ -87,7 +87,7 @@ public class Ventana extends JFrame implements Runnable {
         ses.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                CPU_CLOCK++;
+                CPU_CLOCK++; //CONTADOR CICLOS CPU
                
                 cpuClockLbl.setText("Actual Clock: " + CPU_CLOCK + " Hz");
                 repaint();
@@ -112,7 +112,7 @@ public class Ventana extends JFrame implements Runnable {
                 }
 
                 // Verificacion de los estados de los procesos
-                if (verificado || (SizeProcesosPrev != procesos.size();)) {
+                if (verificado || (SizeProcesosPrev != procesos.size())) {
                     verificado = false;
                     for (Proceso proceso : procesos) {
                         if (proceso.getEstado().equals("BLOQUEADO")) {
