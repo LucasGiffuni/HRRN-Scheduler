@@ -21,8 +21,13 @@ public class Proceso {
     long tRespuesta = 0;
 
     long tTotalVida = 0;
-    
+
     long tTermina = 0;
+
+    long tiempoRetraso = 0;
+
+    long tiempoLlegada = 0;
+    long responseRatio = 0;
 
     public Proceso() {
     }
@@ -38,7 +43,22 @@ public class Proceso {
         this.tiempoEYS = tiempoEYS;
         this.tiempoEspera = tiempoEspera;
         tBurst = (long) (Math.random() * 99 + 1);
+        tiempoRetraso = (long) (Math.random() * 40 + 1);
+
         tInitBurst = tBurst;
+    }
+
+
+
+
+    
+
+    public long getResponseRatio() {
+        return responseRatio;
+    }
+
+    public void setResponseRatio(long responseRatio) {
+        this.responseRatio = responseRatio;
     }
 
     public int getPID() {
@@ -105,11 +125,33 @@ public class Proceso {
         this.tBurst = tBurst;
     }
 
+    
+
+    public long getTiempoRetraso() {
+        return tiempoRetraso;
+    }
+
+    public void setTiempoRetraso(long tiempoRetraso) {
+        this.tiempoRetraso = tiempoRetraso;
+    }
+
+    public long getTiempoLlegada() {
+        return tiempoLlegada;
+    }
+
+    public void setTiempoLlegada(long tiempoLlegada) {
+        this.tiempoLlegada = tiempoLlegada;
+    }
+
+   
+
     @Override
     public String toString() {
-        return "Proceso [PID=" + PID + ", n estado=" + estado + ", modo=" + modo + ", prioridad=" + prioridad
-                + ", tBurst=" + tBurst + ", tiempoEYS=" + tiempoEYS + ", tiempoEnEjecucion=" + tiempoEnEjecucion
-                + ", tiempoEspera=" + tiempoEspera + "]";
+        return "Proceso [PID=" + PID + ", estado=" + estado + ", modo=" + modo + ", prioridad=" + prioridad
+                + ", tBurst=" + tBurst + ", tInicio=" + tInicio + ", tInitBurst=" + tInitBurst + ", tLlegada="
+                + tLlegada + ", tRespuesta=" + tRespuesta + ", tTermina=" + tTermina + ", tTotalVida=" + tTotalVida
+                + ", tiempoEYS=" + tiempoEYS + ", tiempoEnEjecucion=" + tiempoEnEjecucion + ", tiempoEspera="
+                + tiempoEspera + ", tiempoLlegada=" + tiempoLlegada + ", tiempoRetraso=" + tiempoRetraso + "]";
     }
 
     // Método para bloquear y desbloquear estados.
@@ -123,33 +165,53 @@ public class Proceso {
 
     public synchronized void ejecutando(long tiempoActual) {
 
-        setEstado("ACTIVO");
+        
+        if (!(getEstado().equals("FINALIZADO"))) {
+            setEstado("ACTIVO");
+            System.out.println("ESTADO PROCESO: " + getEstado());
 
-        if (tiempoActual == tLlegada) {
-            setEstado("LISTO");
+            if (tiempoActual == tLlegada) {
+                setEstado("LISTO");
+                System.out.println("ESTADO PROCESO: " + getEstado());
 
-        }
+            }
 
-        if (tBurst == tInitBurst) {
-            setEstado("EJECUTADO");
+            if (tBurst == tInitBurst) {
+                setEstado("EJECUTADO");
+                System.out.println("ESTADO PROCESO: " + getEstado());
 
-            tInicio = tiempoActual;
-            tRespuesta = tInicio - tLlegada;
+                tInicio = tiempoActual;
+                tRespuesta = tInicio - tLlegada;
+                System.out.println("Tiempo Inicio: " + tInicio);
+                System.out.println("Tiempo Respuesta: " + tRespuesta);
 
-            if (tiempoEYS > 0) {
-                setEstado("BLOQUEADO");
+                /*
+                 * if (tiempoEYS > 0) {
+                 * setEstado("BLOQUEADO");
+                 * System.out.println("ESTADO PROCESO: " + getEstado());
+                 * 
+                 * }
+                 */
+            }
+
+            if (getEstado().equals("BLOQUEADO") == false) {
+                tBurst--;
+                System.out.println("Tiempo burst: " + tBurst);
+
+            }
+
+            tTotalVida++;
+            System.out.println("Tiempo vida: " + tTotalVida);
+
+            if (tBurst == 0) {
+                setEstado("FINALIZADO");
+                System.out.println("ESTADO PROCESO: " + getEstado());
+
+                tTermina = tiempoActual;
+                System.out.println("Tiempo finalizado: " + tTermina);
+
             }
         }
 
-        if (getEstado().equals("BLOQUEADO") == false) {
-            tBurst--;
-        }
-
-        tTotalVida++;
-
-        if (tBurst == 0) {
-            setEstado("FINALIZADO");
-            tTermina = tiempoActual;
-        }
     }
 }
