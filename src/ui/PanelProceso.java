@@ -7,7 +7,7 @@ import javax.swing.PopupFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
+
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -27,11 +27,11 @@ public class PanelProceso extends JPanel {
     Color burstColor, initBurstColor = Color.darkGray, unarrivedColor,
             lblColor;
 
-    static final int PPANCHO = 50;
+    static final int anchoProceso = 50;
 
-    static final int PPALTO = 150;
+    static final int altoProceso = 150;
 
-    static final int BARALTURA = 135;
+    static final int altura = 135;
 
     static boolean showHidden = false;
     long tInitBurst = 0;
@@ -143,7 +143,7 @@ public class PanelProceso extends JPanel {
             }
         });
 
-        setSize(PPANCHO, PPALTO);
+        setSize(anchoProceso, altoProceso);
 
         setOpaque(true);
         add(pidLbl, "South");
@@ -162,10 +162,10 @@ public class PanelProceso extends JPanel {
 
         initBurstHeight = (int) proceso.gettInitBurst();
         burstHeight = (int) proceso.gettBurst();
-        width = (int) PPANCHO - 2;
+        width = (int) anchoProceso - 2;
 
         lblColor = (proceso.getEstado().equals("LLEGADO") ? Color.black
-                : (showHidden ? Color.lightGray : Color.white));
+                : (showHidden ? Color.lightGray : Color.black));
 
         initBurstColor = (proceso.getEstado().equals("LLEGADO") ? Color.lightGray
                 : Color.lightGray);
@@ -173,28 +173,28 @@ public class PanelProceso extends JPanel {
         burstColor = (proceso.getEstado().equals("LLEGADO"))
                 ? (proceso.getEstado().equals("EJECUTADO") == true ? Color.red
                         : Color.cyan)
-                : (showHidden ? Color.darkGray : Color.cyan);
+                : (showHidden ? Color.darkGray : Color.red);
 
         pidLbl.setForeground(lblColor);
-        pidLbl.setBackground(proceso.getEstado().equals("EJECUTADO") ? Color.red : Color.white);
+        pidLbl.setBackground(proceso.getEstado().equals("EJECUTADO") ? Color.red : Color.black);
 
         if (proceso.getEstado().equals("EJECUTADO") && !proceso.getEstado().equals("BLOQUEADO")) {
             g.setColor(initBurstColor);
-            g.drawRect(0, BARALTURA - initBurstHeight, width,
+            g.drawRect(0, altura - initBurstHeight, width,
                     initBurstHeight);
             g.setColor(burstColor);
-            g.fillRect(1, BARALTURA - burstHeight + 1, width - 1,
+            g.fillRect(1, altura - burstHeight + 1, width - 1,
                     burstHeight - 1);
         } else if (proceso.getEstado().equals("LLEGADO")) {
             g.setColor(Color.cyan);
-            g.drawRect(0, BARALTURA - initBurstHeight, width,
+            g.drawRect(0, altura - initBurstHeight, width,
                     initBurstHeight);
             g.setColor(Color.cyan);
-            g.fillRect(1, BARALTURA - burstHeight + 1, width - 1,
+            g.fillRect(1, altura - burstHeight + 1, width - 1,
                     burstHeight - 1);
         } else if (showHidden) {
             g.setColor(initBurstColor);
-            g.drawRect(0, BARALTURA - initBurstHeight, width,
+            g.drawRect(0, altura - initBurstHeight, width,
                     initBurstHeight);
         }
 

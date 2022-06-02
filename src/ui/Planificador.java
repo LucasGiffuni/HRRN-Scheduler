@@ -1,9 +1,6 @@
 package ui;
 
-import java.awt.Dimension;
-
 import java.awt.Color;
-import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,10 +12,8 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputListener;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
 import java.awt.GridLayout;
@@ -26,14 +21,13 @@ import java.awt.event.MouseEvent;
 
 import model.Proceso;
 
-public class Ventana extends JFrame implements Runnable {
+public class Planificador extends JFrame implements Runnable {
     private PanelProceso procesoPanel;
     private JPanel pn = new JPanel();
     private JPanel infoPanel = new JPanel();
     private JPanel cpuInfoPanel = new JPanel();
     private JLabel cpuClockLbl, cntProcesosBloqueados, cntProcesos, cntProcesosListos, procesoEjecutando;
 
-    private int cntListo = 0, cntBloqueado = 0;
     private Proceso procesoEjecutado = null;
     private int CPU_CLOCK = 0;
     boolean verificado = true;
@@ -52,7 +46,7 @@ public class Ventana extends JFrame implements Runnable {
 
 
 
-    public Ventana() {
+    public Planificador() {
 
         setTitle("Planificador UCU");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -117,13 +111,9 @@ public class Ventana extends JFrame implements Runnable {
                     for (Proceso proceso : procesos) {
                         if (proceso.getEstado().equals("BLOQUEADO")) {
 
-                            cntBloqueado++;
-                            cntProcesosBloqueados.setText("Procesos Bloqueados: " + cntBloqueado);
 
                         } else if (proceso.getEstado().equals("LISTO")) {
 
-                            cntListo++;
-                            cntProcesosListos.setText("Procesos Listos: " + cntBloqueado);
 
                         } else if (proceso.getEstado().equals("EJECUTANDO")) {
 
@@ -135,13 +125,20 @@ public class Ventana extends JFrame implements Runnable {
                 }
 
             }
-        }, 0, 1, TimeUnit.SECONDS);
+        }, 0, 50, TimeUnit.MILLISECONDS);
     }
+
+
+
+    //Problema con orden de la lista, al volver a ordenar por responseTime se uestran los procesos en ese orden.
+    //Problema con como se muestran los procesos, una vez finalizado el proceso se "borra", no queda el marco, esto es porque borramos el proceso de la lista cuando este finaliza.cls
+
+
 
     private void cargarProcesos() {
         int contador = 0;
         for (int i = 0; i < 40; i++) {
-            Proceso p = new Proceso(contador, "LLEGADO", "Kernel", 1, ((int) (Math.random() * (10 - 1))) + 1, 2, 5);
+            Proceso p = new Proceso(contador, "LLEGADO");
             tiempoLlegada += p.getTiempoRetraso();
             p.setTiempoLlegada(tiempoLlegada);
             this.procesos.add(p);
@@ -205,7 +202,7 @@ public class Ventana extends JFrame implements Runnable {
         cpuInfoPanel.setBounds(50, 0, 200, 100);
         cpuInfoPanel.setBackground(Color.pink);
         // CPU clock label
-        cpuClockLbl = new JLabel("Actual Clock: " + CPU_CLOCK + " Hz");
+        cpuClockLbl = new JLabel("Actual Clock: " + CPU_CLOCK + " ");
         cpuInfoPanel.add(cpuClockLbl);
         // Cantidad Procesos label
         cntProcesos = new JLabel("Cantidad Procesos: " + procesos.size());
@@ -277,6 +274,6 @@ public class Ventana extends JFrame implements Runnable {
 
     public static void main(String args[]) {
 
-        new Ventana().setVisible(true);
+        new Planificador().setVisible(true);
     }
 }

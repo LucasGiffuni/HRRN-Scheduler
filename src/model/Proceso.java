@@ -5,11 +5,6 @@ public class Proceso {
 
     int PID; // FINAL
     String estado;
-    String modo;
-    int prioridad;
-    int tiempoEnEjecucion;
-    int tiempoEYS; // FINAL
-    int tiempoEspera;
 
     long tInitBurst = 0;
     long tBurst = 0; // [0 - 100]
@@ -32,26 +27,15 @@ public class Proceso {
     public Proceso() {
     }
 
-    public Proceso(int pID, String estado, String modo, int prioridad, int tiempoEnEjecucion, int tiempoEYS,
-            int tiempoEspera) {
+    public Proceso(int pID, String estado) {
         PID = pID;
         this.estado = estado;
-        this.modo = modo;
-        this.prioridad = prioridad;
-
-        this.tiempoEnEjecucion = tiempoEnEjecucion;
-        this.tiempoEYS = tiempoEYS;
-        this.tiempoEspera = tiempoEspera;
         tBurst = (long) (Math.random() * 99 + 1);
         tiempoRetraso = (long) (Math.random() * 40 + 1);
-
         tInitBurst = tBurst;
     }
 
 
-
-
-    
 
     public long getResponseRatio() {
         return responseRatio;
@@ -73,41 +57,7 @@ public class Proceso {
         this.estado = estado;
     }
 
-    public String getModo() {
-        return modo;
-    }
 
-    public void setModo(String modo) {
-        this.modo = modo;
-    }
-
-    public int getPrioridad() {
-        return prioridad;
-    }
-
-    public void setPrioridad(int prioridad) {
-        this.prioridad = prioridad;
-    }
-
-    public int getTiempoEnEjecucion() {
-        return tiempoEnEjecucion;
-    }
-
-    public void setTiempoEnEjecucion(int tiempoEnEjecucion) {
-        this.tiempoEnEjecucion = tiempoEnEjecucion;
-    }
-
-    public int getTiempoEYS() {
-        return tiempoEYS;
-    }
-
-    public int getTiempoEspera() {
-        return tiempoEspera;
-    }
-
-    public void setTiempoEspera(int tiempoEspera) {
-        this.tiempoEspera = tiempoEspera;
-    }
 
     public long gettInitBurst() {
         return tInitBurst;
@@ -143,15 +93,12 @@ public class Proceso {
         this.tiempoLlegada = tiempoLlegada;
     }
 
-   
-
     @Override
     public String toString() {
-        return "Proceso [PID=" + PID + ", estado=" + estado + ", modo=" + modo + ", prioridad=" + prioridad
-                + ", tBurst=" + tBurst + ", tInicio=" + tInicio + ", tInitBurst=" + tInitBurst + ", tLlegada="
-                + tLlegada + ", tRespuesta=" + tRespuesta + ", tTermina=" + tTermina + ", tTotalVida=" + tTotalVida
-                + ", tiempoEYS=" + tiempoEYS + ", tiempoEnEjecucion=" + tiempoEnEjecucion + ", tiempoEspera="
-                + tiempoEspera + ", tiempoLlegada=" + tiempoLlegada + ", tiempoRetraso=" + tiempoRetraso + "]";
+        return "Proceso [PID=" + PID + ", estado=" + estado + ", responseRatio=" + responseRatio + ", tBurst=" + tBurst
+                + ", tInicio=" + tInicio + ", tInitBurst=" + tInitBurst + ", tLlegada=" + tLlegada + ", tRespuesta="
+                + tRespuesta + ", tTermina=" + tTermina + ", tTotalVida=" + tTotalVida + ", tiempoLlegada="
+                + tiempoLlegada + ", tiempoRetraso=" + tiempoRetraso + "]";
     }
 
     // Método para bloquear y desbloquear estados.
@@ -185,13 +132,7 @@ public class Proceso {
                 System.out.println("Tiempo Inicio: " + tInicio);
                 System.out.println("Tiempo Respuesta: " + tRespuesta);
 
-                /*
-                 * if (tiempoEYS > 0) {
-                 * setEstado("BLOQUEADO");
-                 * System.out.println("ESTADO PROCESO: " + getEstado());
-                 * 
-                 * }
-                 */
+        
             }
 
             if (getEstado().equals("BLOQUEADO") == false) {
