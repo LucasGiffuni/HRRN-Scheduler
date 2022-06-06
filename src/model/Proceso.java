@@ -3,12 +3,12 @@ package model;
 //Clase modelo de un proceso.
 public class Proceso {
 
-    int PID; // FINAL
+    int PID; 
     String estado;
 
     long tInitBurst = 0;
-    long tBurst = 0; // [0 - 100]
-
+    long tBurst = 0;
+    long tBloqueo = 0;
     long tLlegada = 0;
 
     long tInicio = 0;
@@ -27,11 +27,13 @@ public class Proceso {
     public Proceso() {
     }
 
-    public Proceso(int pID, String estado) {
+    public Proceso(int pID, String estado,String maxBurst, String maxRetraso, String maxBloqueo) {
         PID = pID;
         this.estado = estado;
-        tBurst = (long) (Math.random() * 99 + 1);
-        tiempoRetraso = (long) (Math.random() * 40 + 1);
+
+        tBurst = (long) (Math.random() * Integer.parseInt(maxBurst) + 1);
+        tiempoRetraso = (long) (Math.random() * Integer.parseInt(maxRetraso) + 1);
+        tBloqueo =(long) (Math.random() * Integer.parseInt(maxBloqueo) + 1);
         tInitBurst = tBurst;
     }
 

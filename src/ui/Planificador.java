@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,39 +13,54 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputListener;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 
+
+import java.awt.event.ComponentAdapter;
+
+import java.awt.event.ComponentEvent;
+import java.awt.Component;
+
 import model.Proceso;
 
 public class Planificador extends JFrame implements Runnable {
+
     private PanelProceso procesoPanel;
     private JPanel pn = new JPanel();
     private JPanel infoPanel = new JPanel();
     private JPanel cpuInfoPanel = new JPanel();
-    private JLabel cpuClockLbl, cntProcesosBloqueados, cntProcesos, cntProcesosListos, procesoEjecutando;
+    private JLabel CPU_LOCK_LABEL, cntProcesosBloqueados, cntProcesos, cntProcesosListos, procesoEjecutando;
+    JPanel panel = new JPanel();
 
     private Proceso procesoEjecutado = null;
     private int CPU_CLOCK = 0;
     boolean verificado = true;
+    public boolean configurado = false;
+    public ConfigWindow configWindow = new ConfigWindow();
 
     int tiempoLlegada = 0;
-
     private int SizeProcesos; // Cantidad de procesos en la lista
-    private int SizeProcesosPrev; // Valor anterior de la cantidad, sirve para verificar si se modifico la lista
 
-    private JButton boton1;
+    private JButton btnPlanificador, btnConfig;
     private Thread planificar = new Thread(this);
 
     private List<Proceso> procesos = new ArrayList<Proceso>();
-    List<Proceso> procesosOrdenados = new ArrayList<Proceso>();
+    private List<Proceso> procesosPorLlegada = new ArrayList<Proceso>();
 
+    private boolean corriendo = false;
+    private int contador = 0;
 
-
+    // CONFIG WINDOW VARIABLES
+    private int CICLESPEED;
+    private int PROCESSNUMBER;
+    private Color cbloqueo, clisto, cejecutando;
 
     public Planificador() {
 
@@ -55,18 +71,8 @@ public class Planificador extends JFrame implements Runnable {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
 
-        cargarProcesos(); // Cargar procesos al panel de los procesos.
         initUI();
-        init();
-
-    }
-
-    private void init() {
-        for (Proceso proceso : procesos) {
-            procesoPanel = new PanelProceso(proceso);
-            pn.add(procesoPanel);
-
-        }
+      
     }
 
     /*
@@ -81,110 +87,56 @@ public class Planificador extends JFrame implements Runnable {
         ses.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                CPU_CLOCK++; //CONTADOR CICLOS CPU
-               
-                cpuClockLbl.setText("Actual Clock: " + CPU_CLOCK + " Hz");
-                repaint();
+                if (corriendo) {
+                    CPU_CLOCK++; // CONTADOR CICLOS CPU
 
-                if (procesoEjecutado != null) {
-                    System.out.println("Proceso usando CPU: " + procesoEjecutado.getPID());
+                    System.out.println("Clock speed:"
+                            + configWindow.getCICLESPEED());
+                    // Ordenamos los procesos a ejecutar por orden del RESPONSE RATIO
+                    Collections.sort(procesos, new Comparator<Proceso>() {
+                        @Override
+                        public int compare(Proceso p1, Proceso p2) {
+                            return new Long(p1.getResponseRatio()).compareTo(new Long(p2.getResponseRatio()));
+                        }
+                    });
 
-                    System.out.println("");
-                    System.out.println("");
+                    panel.removeAll();
+                    for (Proceso proceso : procesosPorLlegada) {
+                        JLabel pr = new JLabel("Proceso: " + proceso.getPID() + ", Estado: " + proceso.getEstado());
+                        pr.setFont(new Font(pr.getFont().getName(), Font.PLAIN, 20));
 
-                    if (!(procesoEjecutado.getEstado().equals("FINALIZADO"))) {
-                        procesoEjecutado.ejecutando(CPU_CLOCK);
-                    } else {
-                        procesos.remove(procesoEjecutado);
-                        procesoEjecutado = null;
-                        System.out.println("PROCESO FINALIZADO");
-                        System.out.println("PREPARANDO SIGUIENTE PROCESO PARA EJECUTAR");
-                        System.out.println("");
-                        System.out.println("SIGUIENTE PROCESO A EJECUTAR: " + procesos.get(0).getPID());
-                        procesoEjecutado = procesos.get(0); //Asignamos el siguiente proceso a ejecutar
+                        panel.add(pr);
                     }
-                }
 
-                // Verificacion de los estados de los procesos
-                if (verificado || (SizeProcesosPrev != procesos.size())) {
-                    verificado = false;
-                    for (Proceso proceso : procesos) {
-                        if (proceso.getEstado().equals("BLOQUEADO")) {
+                    CPU_LOCK_LABEL.setText("CICLO: " + CPU_CLOCK);
+                    repaint();
 
+                    if (procesoEjecutado != null) {
+                        System.out.println("Proceso usando CPU: " + procesoEjecutado.getPID());
 
-                        } else if (proceso.getEstado().equals("LISTO")) {
+                        System.out.println("");
+                        System.out.println("");
 
-
-                        } else if (proceso.getEstado().equals("EJECUTANDO")) {
-
-                            procesoEjecutado = proceso;
-                            procesoEjecutando.setText("Proceso usando CPU: " + procesoEjecutado.getPID());
-
+                        if (!(procesoEjecutado.getEstado().equals("FINALIZADO"))) {
+                            procesoEjecutado.ejecutando(CPU_CLOCK);
+                        } else {
+                            contador++;
+                            // procesos.remove(procesoEjecutado);
+                            procesoEjecutado = null;
+                            System.out.println("PROCESO FINALIZADO");
+                            System.out.println("PREPARANDO SIGUIENTE PROCESO PARA EJECUTAR");
+                            System.out.println("");
+                            System.out.println("SIGUIENTE PROCESO A EJECUTAR: " + procesos.get(contador).getPID());
+                            procesoEjecutado = procesos.get(contador); // Asignamos el siguiente proceso a ejecutar
                         }
                     }
                 }
 
             }
-        }, 0, 50, TimeUnit.MILLISECONDS);
+        }, 0, configWindow.getCICLESPEED(), TimeUnit.MILLISECONDS);
     }
 
-
-
-    //Problema con orden de la lista, al volver a ordenar por responseTime se uestran los procesos en ese orden.
-    //Problema con como se muestran los procesos, una vez finalizado el proceso se "borra", no queda el marco, esto es porque borramos el proceso de la lista cuando este finaliza.cls
-
-
-
-    private void cargarProcesos() {
-        int contador = 0;
-        for (int i = 0; i < 40; i++) {
-            Proceso p = new Proceso(contador, "LLEGADO");
-            tiempoLlegada += p.getTiempoRetraso();
-            p.setTiempoLlegada(tiempoLlegada);
-            this.procesos.add(p);
-            contador++;
-        }
-
-        this.SizeProcesos = procesos.size();
-        this.SizeProcesosPrev = SizeProcesos;
-
-        this.procesos = algoritmoHRRN(this.procesos); // Ordenamos los proceso por response ratio, esto significa que se ejecutaran en este orden.
-        this.procesoEjecutado = this.procesos.get(0); //Seteamos a fuego el primer proceso de la lista ya ordenada como ejectuando.
-
-    }
-
-    private List<Proceso> algoritmoHRRN(List<Proceso> procesos) {
-        long responseRatio ;
-
-
-        for (Proceso proceso : procesos) {
-            responseRatio = 0;
-            responseRatio = (proceso.getTiempoLlegada() + proceso.gettBurst())/ proceso.gettBurst();
-            proceso.setResponseRatio(responseRatio);
-            System.out.println("Response ratio: " + responseRatio);
-
-        }
-
-        Collections.sort(procesos, new Comparator<Proceso>() {
-            @Override
-            public int compare(Proceso p1, Proceso p2) {
-                return new Long(p1.getResponseRatio()).compareTo(new Long(p2.getResponseRatio()));
-            }
-        });
-
-        for (Proceso proceso : procesos) {
-            System.out.println("PID: " + proceso.getPID() +" , Response Ratio: " + proceso.getResponseRatio());
-        }
-       
-
-
-
-        return procesos;
-    }
-
-    private void initUI() {
-
-        // Process panel config
+    private void init() {
         pn.setBounds(0, 200, this.getWidth(), 200);
         pn.setBackground(Color.LIGHT_GRAY);
 
@@ -192,8 +144,66 @@ public class Planificador extends JFrame implements Runnable {
         pn.setLayout(new GridLayout(0, this.procesos.size(), 3, 3));
         add(pn);
 
+        // Ordenamos los procesos en orden por PID para generar el GUI
+        Collections.sort(procesos, new Comparator<Proceso>() {
+            @Override
+            public int compare(Proceso p1, Proceso p2) {
+                return new Long(p1.getPID()).compareTo(new Long(p2.getPID()));
+            }
+        });
+        procesosPorLlegada = procesos;
+        for (Proceso proceso : procesos) {
+            procesoPanel = new PanelProceso(proceso);
+            pn.add(procesoPanel);
+
+        }
+    }
+
+    // Problema con orden de la lista, al volver a ordenar por responseTime se
+    // uestran los procesos en ese orden.
+    // Problema con como se muestran los procesos, una vez finalizado el proceso se
+    // "borra", no queda el marco, esto es porque borramos el proceso de la lista
+    // cuando este finaliza.cls
+    private void cargarProcesos() {
+        int contador = 0;
+        for (int i = 0; i < configWindow.getPROCESSNUMBER(); i++) {
+            Proceso p = new Proceso(contador, "LLEGADO", configWindow.getMaxBurst(), configWindow.getMaxRetardo(),
+                    configWindow.getMaxBloqueo());
+            tiempoLlegada += p.getTiempoRetraso();
+            p.setTiempoLlegada(tiempoLlegada);
+            this.procesos.add(p);
+            contador++;
+        }
+
+        this.SizeProcesos = procesos.size();
+
+        this.procesos = algoritmoHRRN(this.procesos); // Ordenamos los proceso por response ratio, esto
+                                                      // significa que se ejecutaran en este orden.
+
+        this.procesoEjecutado = this.procesos.get(0); // Seteamos a fuego el primer proceso de la lista ya
+                                                      // ordenada como ejectuando.
+
+    }
+
+    private List<Proceso> algoritmoHRRN(List<Proceso> procesos) {
+        long responseRatio;
+
+        for (Proceso proceso : procesos) {
+            responseRatio = 0;
+            responseRatio = (proceso.getTiempoLlegada() + proceso.gettBurst()) / proceso.gettBurst();
+            proceso.setResponseRatio(responseRatio);
+            System.out.println("Response ratio: " + responseRatio);
+        }
+        return procesos;
+    }
+
+    private void initUI() {
+      
+
+        // Process panel config
+
         // Information panel config
-        infoPanel.setBounds(0, getWidth() / 2 - 50, this.getWidth(), 100);
+        infoPanel.setBounds(0, getWidth() / 2 - 150, this.getWidth(), 200);
         infoPanel.setBackground(Color.cyan);
         add(infoPanel);
         infoPanel.setLayout(null);
@@ -201,9 +211,7 @@ public class Planificador extends JFrame implements Runnable {
         // CPU information panel config
         cpuInfoPanel.setBounds(50, 0, 200, 100);
         cpuInfoPanel.setBackground(Color.pink);
-        // CPU clock label
-        cpuClockLbl = new JLabel("Actual Clock: " + CPU_CLOCK + " ");
-        cpuInfoPanel.add(cpuClockLbl);
+
         // Cantidad Procesos label
         cntProcesos = new JLabel("Cantidad Procesos: " + procesos.size());
         cpuInfoPanel.add(cntProcesos);
@@ -219,17 +227,41 @@ public class Planificador extends JFrame implements Runnable {
         infoPanel.add(procesoEjecutando);
         infoPanel.add(cpuInfoPanel);
 
-        // Button config
-        boton1 = new JButton("Comenzar");
-        boton1.setBounds(getHeight() - cpuInfoPanel.getWidth() + 50, 50, 100, 40);
-        // add(boton1);
-        infoPanel.add(boton1);
-        boton1.addMouseListener(new MouseInputListener() {
+        // panel.setBounds(getWidth() - 500, 0, 400, 200);
+        panel.setLayout(new BoxLayout(panel, 1));
+
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setBounds(getWidth() - 500, 0, 400, 200);
+        infoPanel.add(scrollPane);
+
+        // CICLE LABEL
+        CPU_LOCK_LABEL = new JLabel("CICLO: ");
+        CPU_LOCK_LABEL.setBounds(getHeight() - cpuInfoPanel.getWidth() + 65, 0, 100, 40);
+        infoPanel.add(CPU_LOCK_LABEL);
+
+        // Button planificador
+        btnPlanificador = new JButton("Comenzar");
+        btnPlanificador.setBounds(getHeight() - cpuInfoPanel.getWidth() + 50, 50, 100, 40);
+        infoPanel.add(btnPlanificador);
+        btnPlanificador.setEnabled(false);
+
+        btnPlanificador.addMouseListener(new MouseInputListener() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
                 // TODO Auto-generated method stub
-                planificar.start();
+
+                if (!corriendo) {
+                    corriendo = true;
+                    btnPlanificador.setText("Pausar");
+
+                    planificar.start();
+                } else {
+                    corriendo = false;
+                    btnPlanificador.setText("Continuar");
+                }
 
             }
 
@@ -270,6 +302,106 @@ public class Planificador extends JFrame implements Runnable {
             }
 
         });
+
+        // Button planificador
+        btnConfig = new JButton("Configurar");
+        btnConfig.setBounds(getHeight() - cpuInfoPanel.getWidth() + 50, 100, 100, 40);
+        infoPanel.add(btnConfig);
+
+        btnConfig.addMouseListener(new MouseInputListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // TODO Auto-generated method stub
+                configWindow.setVisible(true);
+                btnPlanificador.setEnabled(true);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+
+        });
+
+        configWindow.addComponentListener(new ComponentAdapter() {
+            public void componentShown(ComponentEvent evt) {
+                Component c = (Component) evt.getSource();
+                
+            }
+
+            public void componentHidden(ComponentEvent evt) {
+                
+                System.out.println("CICLE " +  configWindow.getCICLESPEED());
+                System.out.println("PROCESS " + configWindow.getPROCESSNUMBER());
+                System.out.println("brust " + configWindow.getMaxBurst());
+                System.out.println("bloqueo " + configWindow.getMaxBloqueo());
+                System.out.println("retardo " + configWindow.getMaxRetardo());
+
+                cargarProcesos();
+                init();
+
+            }
+
+            public void componentMoved(ComponentEvent evt) {
+
+            }
+
+            public void componentResized(ComponentEvent evt) {
+
+            }
+        });
+    }
+
+    public void setCICLESPEED(int cICLESPEED) {
+        CICLESPEED = cICLESPEED;
+    }
+
+    public void setPROCESSNUMBER(int pROCESSNUMBER) {
+        PROCESSNUMBER = pROCESSNUMBER;
+    }
+
+    public void setCbloqueo(Color cbloqueo) {
+        this.cbloqueo = cbloqueo;
+    }
+
+    public void setClisto(Color clisto) {
+        this.clisto = clisto;
+    }
+
+    public void setCejecutando(Color cejecutando) {
+        this.cejecutando = cejecutando;
     }
 
     public static void main(String args[]) {

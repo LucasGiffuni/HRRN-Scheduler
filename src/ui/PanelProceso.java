@@ -110,39 +110,6 @@ public class PanelProceso extends JPanel {
         pidLbl.setToolTipText(proceso.toString());
         pidLbl.setHorizontalAlignment(SwingConstants.CENTER);
 
-        pidLbl.addMouseListener(new MouseListener() {
-
-            @Override
-            public void mouseReleased(MouseEvent arg0) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void mousePressed(MouseEvent arg0) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent arg0) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent arg0) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent arg0) {
-                JOptionPane.showMessageDialog(null, proceso.toString(), "Informacion del Proceso",
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-
         setSize(anchoProceso, altoProceso);
 
         setOpaque(true);
@@ -178,7 +145,7 @@ public class PanelProceso extends JPanel {
         pidLbl.setForeground(lblColor);
         pidLbl.setBackground(proceso.getEstado().equals("EJECUTADO") ? Color.red : Color.black);
 
-        if (proceso.getEstado().equals("EJECUTADO") && !proceso.getEstado().equals("BLOQUEADO")) {
+        if (proceso.getEstado().equals("EJECUTADO") && !proceso.getEstado().equals("FINALIZADO")) {
             g.setColor(initBurstColor);
             g.drawRect(0, altura - initBurstHeight, width,
                     initBurstHeight);
