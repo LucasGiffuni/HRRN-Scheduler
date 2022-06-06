@@ -38,7 +38,7 @@ public class Planificador extends JFrame implements Runnable {
     private JPanel pn = new JPanel();
     private JPanel infoPanel = new JPanel();
     private JPanel cpuInfoPanel = new JPanel();
-    private JLabel CPU_LOCK_LABEL, cntProcesosBloqueados, cntProcesos, cntProcesosListos, procesoEjecutando;
+    private JLabel CPU_LOCK_LABEL, cntProcesosBloqueados, cntProcesos, velocidadP, procesoEjecutando;
     JPanel panel = new JPanel();
 
     private Proceso procesoEjecutado = null;
@@ -47,14 +47,13 @@ public class Planificador extends JFrame implements Runnable {
     public boolean configurado = false;
     public ConfigWindow configWindow = new ConfigWindow();
 
-    int tiempoLlegada = 0;
+    int tiempoLlegada ;
     private int SizeProcesos; // Cantidad de procesos en la lista
 
-    private JButton btnPlanificador, btnConfig;
+    private JButton btnPlanificador, btnConfig,btnDesbloquear;
     private Thread planificar = new Thread(this);
 
     private List<Proceso> procesos = new ArrayList<Proceso>();
-    private List<Proceso> procesosPorLlegada = new ArrayList<Proceso>();
 
     private boolean corriendo = false;
     private int contador = 0;
@@ -88,11 +87,14 @@ public class Planificador extends JFrame implements Runnable {
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
 
         ses.scheduleAtFixedRate(new Runnable() {
+            
             @Override
             public void run() {
+                pn.setBorder(BorderFactory.createTitledBorder(blackline2, "procesos"));
+
                 if (corriendo) {
                     CPU_CLOCK++; // CONTADOR CICLOS CPU
-
+                    cntProcesos.setText("Cantidad de procesos: " + configWindow.getPROCESSNUMBER());
                     System.out.println("Clock speed:"
                             + configWindow.getCICLESPEED());
                     // Ordenamos los procesos a ejecutar por orden del RESPONSE RATIO
@@ -104,7 +106,7 @@ public class Planificador extends JFrame implements Runnable {
                     });
 
                     panel.removeAll();
-                    for (Proceso proceso : procesosPorLlegada) {
+                    for (Proceso proceso : procesos) {
                         JLabel pr = new JLabel("Proceso: " + proceso.getPID() + ", Estado: " + proceso.getEstado());
                         pr.setFont(new Font(pr.getFont().getName(), Font.PLAIN, 20));
 
@@ -130,6 +132,7 @@ public class Planificador extends JFrame implements Runnable {
                             System.out.println("PREPARANDO SIGUIENTE PROCESO PARA EJECUTAR");
                             System.out.println("");
                             System.out.println("SIGUIENTE PROCESO A EJECUTAR: " + procesos.get(contador).getPID());
+                            
                             procesoEjecutado = procesos.get(contador); // Asignamos el siguiente proceso a ejecutar
                         }
                     }
@@ -144,7 +147,7 @@ public class Planificador extends JFrame implements Runnable {
         pn.setBorder(BorderFactory.createTitledBorder(blackline2, "procesos"));
 
         pn.setBounds(0, 200, this.getWidth(), 200);
-        pn.setBackground(Color.lightGray);
+        //pn.setBackground(Color.lightGray);
 
         pn.setBorder(new EmptyBorder(25, 25, 25, 35));
         pn.setLayout(new GridLayout(0, this.procesos.size(), 3, 3));
@@ -157,7 +160,6 @@ public class Planificador extends JFrame implements Runnable {
                 return new Long(p1.getPID()).compareTo(new Long(p2.getPID()));
             }
         });
-        procesosPorLlegada = procesos;
         for (Proceso proceso : procesos) {
             procesoPanel = new PanelProceso(proceso);
             pn.add(procesoPanel);
@@ -175,7 +177,7 @@ public class Planificador extends JFrame implements Runnable {
         for (int i = 0; i < configWindow.getPROCESSNUMBER(); i++) {
             Proceso p = new Proceso(contador, "LLEGADO", configWindow.getMaxBurst(), configWindow.getMaxRetardo(),
                     configWindow.getMaxBloqueo());
-            tiempoLlegada += p.getTiempoRetraso();
+            tiempoLlegada -= p.getTiempoRetraso();
             p.setTiempoLlegada(tiempoLlegada);
             this.procesos.add(p);
             contador++;
@@ -208,22 +210,25 @@ public class Planificador extends JFrame implements Runnable {
 
         // Process panel config
 
+        infoPanel.setBorder(BorderFactory.createTitledBorder(blackline2, "status"));
+
         // Information panel config
         infoPanel.setBounds(0, getWidth() / 2 - 150, this.getWidth(), 200);
-        infoPanel.setBackground(Color.cyan);
+
+        //infoPanel.setBackground(Color.cyan);
         add(infoPanel);
         infoPanel.setLayout(null);
 
         // CPU information panel config
-        cpuInfoPanel.setBounds(50, 0, 200, 100);
-        cpuInfoPanel.setBackground(Color.pink);
+        cpuInfoPanel.setBounds(50, 10, 200, 100);
+        //cpuInfoPanel.setBackground(Color.pink);
 
         // Cantidad Procesos label
-        cntProcesos = new JLabel("Cantidad Procesos: " + procesos.size());
-        cpuInfoPanel.add(cntProcesos);
+        velocidadP = new JLabel("Velocidad de simulación: " + configWindow.getCICLESPEED());
+        cpuInfoPanel.add(velocidadP);
         // Cantidad Procesos Listos
-        cntProcesosListos = new JLabel("Procesos Listos: " + 0);
-        cpuInfoPanel.add(cntProcesosListos);
+        cntProcesos = new JLabel("Cantidad de procesos " + configWindow.getPROCESSNUMBER());
+        cpuInfoPanel.add(cntProcesos);
         // Cantidad Procesos Bloqueados
         cntProcesosBloqueados = new JLabel("Procesos Bloqueados: " + 0);
         cpuInfoPanel.add(cntProcesosBloqueados);
@@ -241,7 +246,7 @@ public class Planificador extends JFrame implements Runnable {
         JScrollPane scrollPane = new JScrollPane(panel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setBounds(getWidth() - 500, 0, 400, 200);
+        scrollPane.setBounds(getWidth() - 475, 10, 400, 200);
         Border blackline2 = BorderFactory.createTitledBorder("Title");
         scrollPane.setBorder(BorderFactory.createTitledBorder(blackline2, "Estados proceso"));
         infoPanel.add(scrollPane);
@@ -255,6 +260,14 @@ public class Planificador extends JFrame implements Runnable {
         btnPlanificador = new JButton("Comenzar");
         btnPlanificador.setBounds(getHeight() - cpuInfoPanel.getWidth() + 50, 50, 100, 40);
         infoPanel.add(btnPlanificador);
+
+
+        // Button desbloquear
+        btnDesbloquear = new JButton("Desbloquear");
+        btnDesbloquear.setBounds(50, 10, 100, 40);
+        infoPanel.add(btnDesbloquear);
+
+
         btnPlanificador.setEnabled(false);
 
         btnPlanificador.addMouseListener(new MouseInputListener() {
@@ -378,6 +391,8 @@ public class Planificador extends JFrame implements Runnable {
                 System.out.println("brust " + configWindow.getMaxBurst());
                 System.out.println("bloqueo " + configWindow.getMaxBloqueo());
                 System.out.println("retardo " + configWindow.getMaxRetardo());
+
+                tiempoLlegada = configWindow.getPROCESSNUMBER();
 
                 cargarProcesos();
                 init();
