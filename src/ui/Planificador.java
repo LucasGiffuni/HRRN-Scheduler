@@ -14,8 +14,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputListener;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
@@ -62,6 +64,7 @@ public class Planificador extends JFrame implements Runnable {
     private int PROCESSNUMBER;
     private Color cbloqueo, clisto, cejecutando;
 
+    Border blackline2 = BorderFactory.createTitledBorder("Title");
     public Planificador() {
 
         setTitle("Planificador UCU");
@@ -109,7 +112,7 @@ public class Planificador extends JFrame implements Runnable {
                     }
 
                     CPU_LOCK_LABEL.setText("CICLO: " + CPU_CLOCK);
-                    repaint();
+                  
 
                     if (procesoEjecutado != null) {
                         System.out.println("Proceso usando CPU: " + procesoEjecutado.getPID());
@@ -131,14 +134,17 @@ public class Planificador extends JFrame implements Runnable {
                         }
                     }
                 }
-
+                repaint();
             }
+            
         }, 0, configWindow.getCICLESPEED(), TimeUnit.MILLISECONDS);
     }
 
     private void init() {
+        pn.setBorder(BorderFactory.createTitledBorder(blackline2, "procesos"));
+
         pn.setBounds(0, 200, this.getWidth(), 200);
-        pn.setBackground(Color.LIGHT_GRAY);
+        pn.setBackground(Color.lightGray);
 
         pn.setBorder(new EmptyBorder(25, 25, 25, 35));
         pn.setLayout(new GridLayout(0, this.procesos.size(), 3, 3));
@@ -224,6 +230,8 @@ public class Planificador extends JFrame implements Runnable {
         // Proceso haciendo uso de CPU
         procesoEjecutando = new JLabel("Proceso usando CPU: ");
 
+        cpuInfoPanel.setBorder(BorderFactory.createTitledBorder(blackline2, "Información simulador"));
+
         infoPanel.add(procesoEjecutando);
         infoPanel.add(cpuInfoPanel);
 
@@ -234,6 +242,8 @@ public class Planificador extends JFrame implements Runnable {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setBounds(getWidth() - 500, 0, 400, 200);
+        Border blackline2 = BorderFactory.createTitledBorder("Title");
+        scrollPane.setBorder(BorderFactory.createTitledBorder(blackline2, "Estados proceso"));
         infoPanel.add(scrollPane);
 
         // CICLE LABEL
