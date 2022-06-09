@@ -30,11 +30,11 @@ public class Proceso {
         PID = pID;
         this.estado = estado;
   
-            tBurst = (long) (Math.random() * Integer.parseInt(maxBurst) + 1);
+        tBurst = (long) (Math.random() * Integer.parseInt(maxBurst) + 1);
         
         tiempoRetraso = (long) (Math.random() * Integer.parseInt(maxRetraso) /2  + 1);
         
-        tBloqueo = (long) (Math.random() * tBurst + 1);
+        tBloqueo = (long) (Math.random() * tBurst /2  + 1);
         tBloqueoActual = tBloqueo; // Asignamos el tiempo random de bloqueo al tiempo de bloqueo actual
         tInitBurst = tBurst;
     }
@@ -123,7 +123,7 @@ public class Proceso {
             System.out.println("");
 
             // Logica para bloquear
-            if ((tTotalVida % tBloqueoActual == 0)) {
+            if ((tTotalVida % tBloqueoActual == 0 )) {
                 System.out.println("BLOQUEANDO PROCESO POR E/S");
                 
                 setEstado("BLOQUEADO");
@@ -152,9 +152,13 @@ public class Proceso {
 
             }
 
-            if ((getEstado().equals("EJECUTADO"))) {
+            if ((getEstado().equals("LISTOBLOQ"))||(getEstado().equals("EJECUTADO"))) {
                 tBurst--;
                 System.out.println("Tiempo burst: " + tBurst);
+
+            }
+            if((getEstado().equals("LISTOBLOQ"))){
+                setEstado("EJECUTADO");
 
             }
 

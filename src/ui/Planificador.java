@@ -59,7 +59,9 @@ public class Planificador extends JFrame implements Runnable {
     private boolean corriendo = false;
     private int contador2 = 0;
 
+    boolean aux = false;
     boolean nose = false;
+    int index = 0;
 
     // CONFIG WINDOW VARIABLES
     private int CICLESPEED;
@@ -110,57 +112,78 @@ public class Planificador extends JFrame implements Runnable {
 
                     panel.add(pr);
                 }
+
                 if (corriendo) {
+
                     CPU_CLOCK++; // CONTADOR CICLOS CPU
+
                     cntProcesos.setText("Cantidad de procesos: " + configWindow.getPROCESSNUMBER());
                     cntProcesosBloqueados.setText("Procesos Bloqueados: " + procesosBloqueados.size());
                     velocidadP.setText("Velocidad de simulación: " + configWindow.getCICLESPEED());
                     CPU_LOCK_LABEL.setText("CICLO: " + CPU_CLOCK);
 
-                    if (procesoEjecutado != null ) {
-                        //System.out.println("Proceso usando CPU: " + procesoEjecutado.getPID());
+                   
+                    if (procesoEjecutado != null) {
+                        // System.out.println("Proceso usando CPU: " + procesoEjecutado.getPID());
 
                         System.out.println("");
                         System.out.println("");
 
-                        System.out.println("size: " + procesos.size());
-                        System.out.println("contador: " + contador2);
+                         System.out.println("size: " + procesos.size());
+                         System.out.println("contador: " + contador2);
+                        if (!aux) {
+                            if (!(procesoEjecutado.getEstado().equals("FINALIZADO"))) {
+                                if (!(procesoEjecutado.getEstado().equals("BLOQUEADO"))) {
+                                    procesoEjecutado.ejecutando(CPU_CLOCK);
+                                } else {
+                                 
+                                    algoritmoHRRN(procesos);
+                                    Collections.sort(procesos, new Comparator<Proceso>() {
+                                        @Override
+                                        public int compare(Proceso p1, Proceso p2) {
+                                            return new Long(p1.getResponseRatio())
+                                                    .compareTo(new Long(p2.getResponseRatio()));
+                                        }
+                                    });
 
+                                    procesosBloqueados.add(procesoEjecutado);
+                                    procesoEjecutado = null;
+                                    procesoEjecutado = procesos.get(contador2);
+                                    contador2++;
+                                    
 
-                        if (!(procesoEjecutado.getEstado().equals("FINALIZADO"))) {
-                            if (!(procesoEjecutado.getEstado().equals("BLOQUEADO"))) {
-                                procesoEjecutado.ejecutando(CPU_CLOCK);
-                            } else if (contador2 != procesos.size()) {
+                                } 
+
+                            } else if (procesoEjecutado.getEstado().equals("FINALIZADO")) {
+                                contador2++;
                                 // procesos.remove(procesoEjecutado);
-                                procesosBloqueados.add(procesoEjecutado);
                                 procesoEjecutado = null;
+                                System.out.println("PROCESO FINALIZADO");
+                                System.out.println("PREPARANDO SIGUIENTE PROCESO PARA EJECUTAR");
+                                System.out.println("");
+                                System.out.println("SIGUIENTE PROCESO A EJECUTAR: " + procesos.get(contador2).getPID());
 
                                 procesoEjecutado = procesos.get(contador2);
 
                                 contador2++;
 
-                            } else {
-                                // procesos.remove(procesoEjecutado);
-                                procesosBloqueados.add(procesoEjecutado);
-
-                                procesoEjecutado = null;
-
-                                System.out.println("TODOS LOS PROCESOS BLOQUEADOS");
                             }
-
-                        } else if (procesoEjecutado.getEstado().equals("FINALIZADO")) {
-                            contador2++;
-                            // procesos.remove(procesoEjecutado);
+                        } else {
+                            System.out.println("PROCESO PREPARADO");
+                            System.out.println("INDEX PROCESO PREPARADO: " + index);
+                            System.out.println("PID: " + procesosBloqueados.get(index).getPID());
                             procesoEjecutado = null;
-                            System.out.println("PROCESO FINALIZADO");
-                            System.out.println("PREPARANDO SIGUIENTE PROCESO PARA EJECUTAR");
-                            System.out.println("");
-                            System.out.println("SIGUIENTE PROCESO A EJECUTAR: " + procesos.get(contador2).getPID());
 
-                            procesoEjecutado = procesos.get(contador2); // Asignamos el siguiente proceso a ejecutar
-
+                            algoritmoHRRN(procesos);
+                            procesoEjecutado = procesos.get(contador2);
+                            if(procesosBloqueados.get(index) == procesos.get(contador2)){
+                                contador2--;
+                            }
+                            //contador2--;
+                            aux = false;
                         }
                     }
+                  
                     if (procesosBloqueados != null) {
                         // LOGICA DESBLOQUEAR
                         for (Proceso procesoBloqueado : procesosBloqueados) {
@@ -168,39 +191,27 @@ public class Planificador extends JFrame implements Runnable {
                             if (!(procesoBloqueado.getEstado().equals("PREPARADO"))
                                     && (procesoBloqueado.getEstado().equals("BLOQUEADO"))) {
                                 System.out.println("DESBLOQUEANDO PROCESO: " + procesoBloqueado.getPID());
-
-                                procesoBloqueado.ejecutando(CPU_CLOCK); // "Ejecutamos" el proceso para que el
-                                                                        // tiempo de
-                                // bloqueo baje, una vez llegue a 0 su estado
-                                // será preparado.
+                                // "Ejecutamos" el proceso para que el tiempo de bloqueo baje, una vez llegue a
+                                // 0 su estadoserá preparado.
+                                procesoBloqueado.ejecutando(CPU_CLOCK);
 
                             }
                             if (procesoBloqueado.getEstado().equals("PREPARADO")) {
-                                nose = true;
-                                System.out.println("ELIMINANDO PROCESO BLOQUEADO: " + procesoBloqueado.getPID());
-                                // procesosBloqueados.remove(procesoBloqueado);
-                                // procesoBloqueado.setEstado("LISTOBLOQUEADO");
+
                                 if (procesoBloqueado.getEstado().equals("PREPARADO")) {
-                                   procesoBloqueado.setEstado("LISTO");
-                                   algoritmoHRRN(procesos);
-
-
-
-
-                                
-                                } else {
-                                    // procesoBloqueado.ejecutando(CPU_CLOCK); // "Ejecutamos" el proceso para que
-                                    // el
-                                    // tiempo de
-                                    // bloqueo baje, una vez llegue a 0 su estado
-                                    // será preparado.
+                                    procesoBloqueado.setEstado("LISTOBLOQ");
+                                    aux = true;
+                                    index = procesosBloqueados.indexOf(procesoBloqueado);
+                                    algoritmoHRRN(procesos);
                                 }
-
                             }
 
                         }
-                    } 
-                   
+                    }else{
+                        aux = false;
+                        
+                    }
+
                     repaint();
 
                 }
@@ -210,6 +221,30 @@ public class Planificador extends JFrame implements Runnable {
             }
 
         }, 0, configWindow.getCICLESPEED(), TimeUnit.MILLISECONDS);
+    }
+
+    private boolean verificarProcesosPreparados() {
+        boolean bandera = false;
+        for (Proceso proceso : procesos) {
+            if (proceso.getEstado().equals("PREPARADO")) {
+                bandera = true;
+            } else {
+                bandera = false;
+            }
+        }
+        return bandera;
+    }
+
+    private boolean verificarProcesosBloqueados() {
+        boolean bandera = false;
+        for (Proceso proceso : procesosBloqueados) {
+            if (proceso.getEstado().equals("BLOQUEADO")) {
+                bandera = true;
+            } else {
+                bandera = false;
+            }
+        }
+        return bandera;
     }
 
     private void init() {
@@ -243,7 +278,7 @@ public class Planificador extends JFrame implements Runnable {
         int contador = 0;
         this.contador2 = 0;
         for (int i = 0; i < configWindow.getPROCESSNUMBER(); i++) {
-            Proceso p = new Proceso(contador, "LISTO", configWindow.getMaxBurst(), configWindow.getMaxRetardo(),
+            Proceso p = new Proceso(contador, "LLEGADO", configWindow.getMaxBurst(), configWindow.getMaxRetardo(),
                     configWindow.getMaxBloqueo());
             tiempoLlegada -= p.getTiempoRetraso();
             p.setTiempoLlegada(tiempoLlegada);

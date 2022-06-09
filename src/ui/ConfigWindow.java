@@ -50,7 +50,7 @@ public class ConfigWindow extends JFrame implements ChangeListener {
         panel.setBackground(Color.pink);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        JLabel cicleSpeed = new JLabel("Velocidad de simulación en milisegundos = " + "50");
+        JLabel cicleSpeed = new JLabel("Velocidad de simulación en milisegundos = " + "1000");
         panel.add(cicleSpeed);
 
         JPanel sliderPanel = new JPanel();
@@ -98,7 +98,7 @@ public class ConfigWindow extends JFrame implements ChangeListener {
         processPanel.add(processNumber);
         t = new JTextField("", 16);
         processPanel.add(t);
-        t.setText("2");
+        t.setText("50");
 
         JLabel burst = new JLabel("Max Burst: ");
         processPanel.add(burst);

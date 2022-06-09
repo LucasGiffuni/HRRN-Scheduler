@@ -182,11 +182,11 @@ public class PanelProceso extends JPanel {
             g.fillRect(1, altura - burstHeight + 1, width - 1,
                     burstHeight - 1);
         }
-        else if (proceso.getEstado().equals("PREPARADO")) {
-            g.setColor(Color.pink);
+        else if (proceso.getEstado().equals("LISTOBLOQ")) {
+            g.setColor(Color.cyan);
             g.drawRect(0, altura - initBurstHeight, width,
                     initBurstHeight);
-            g.setColor(Color.pink);
+            g.setColor(Color.cyan);
             g.fillRect(1, altura - burstHeight + 1, width - 1,
                     burstHeight - 1);
         }
