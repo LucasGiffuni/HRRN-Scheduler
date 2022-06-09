@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.beans.Visibility;
 import java.util.Hashtable;
 
 import javax.swing.*;
@@ -29,7 +30,12 @@ public class ConfigWindow extends JFrame implements ChangeListener {
 
     public ConfigWindow() {
 
+    }
+
+    public void setup() {
+
         setTitle("Configuracion");
+        setAlwaysOnTop(true);
         setUndecorated(true);
         setSize(750, 450);
         setResizable(false);
@@ -44,7 +50,7 @@ public class ConfigWindow extends JFrame implements ChangeListener {
         panel.setBackground(Color.pink);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        JLabel cicleSpeed = new JLabel("Velocidad de simulación en milisegundos = " + "1000");
+        JLabel cicleSpeed = new JLabel("Velocidad de simulación en milisegundos = " + "50");
         panel.add(cicleSpeed);
 
         JPanel sliderPanel = new JPanel();
@@ -62,7 +68,7 @@ public class ConfigWindow extends JFrame implements ChangeListener {
         buttonPanel.setLayout(new GridLayout(1, 1));
         buttonPanel.setBackground(Color.pink);
 
-        b = new JSlider(0, 2000, 50);
+        b = new JSlider(0, 2000, 1000);
         b.setPreferredSize(new Dimension(600, 50));
 
         Hashtable position = new Hashtable();
@@ -92,7 +98,7 @@ public class ConfigWindow extends JFrame implements ChangeListener {
         processPanel.add(processNumber);
         t = new JTextField("", 16);
         processPanel.add(t);
-        t.setText("40");
+        t.setText("2");
 
         JLabel burst = new JLabel("Max Burst: ");
         processPanel.add(burst);
@@ -111,7 +117,6 @@ public class ConfigWindow extends JFrame implements ChangeListener {
         JTextField t4 = new JTextField("", 16);
         processPanel.add(t4);
         t4.setText("10");
-
 
         setCICLESPEED(50);
         t.addActionListener(new ActionListener() {

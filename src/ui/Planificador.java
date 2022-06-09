@@ -24,7 +24,6 @@ import javax.swing.JButton;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 
-
 import java.awt.event.ComponentAdapter;
 
 import java.awt.event.ComponentEvent;
@@ -47,16 +46,20 @@ public class Planificador extends JFrame implements Runnable {
     public boolean configurado = false;
     public ConfigWindow configWindow = new ConfigWindow();
 
-    int tiempoLlegada ;
+    int tiempoLlegada;
     private int SizeProcesos; // Cantidad de procesos en la lista
 
-    private JButton btnPlanificador, btnConfig,btnDesbloquear;
+    private JButton btnPlanificador, btnConfig, btnDesbloquear;
     private Thread planificar = new Thread(this);
 
     private List<Proceso> procesos = new ArrayList<Proceso>();
+    private List<Proceso> procesosBloqueados = new ArrayList<Proceso>();
+    private Proceso procesoPreparadoAEjecutar = null;
 
     private boolean corriendo = false;
-    private int contador = 0;
+    private int contador2 = 0;
+
+    boolean nose = false;
 
     // CONFIG WINDOW VARIABLES
     private int CICLESPEED;
@@ -64,6 +67,7 @@ public class Planificador extends JFrame implements Runnable {
     private Color cbloqueo, clisto, cejecutando;
 
     Border blackline2 = BorderFactory.createTitledBorder("Title");
+
     public Planificador() {
 
         setTitle("Planificador UCU");
@@ -74,7 +78,7 @@ public class Planificador extends JFrame implements Runnable {
         setVisible(true);
 
         initUI();
-      
+
     }
 
     /*
@@ -87,67 +91,131 @@ public class Planificador extends JFrame implements Runnable {
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
 
         ses.scheduleAtFixedRate(new Runnable() {
-            
+
             @Override
             public void run() {
                 pn.setBorder(BorderFactory.createTitledBorder(blackline2, "procesos"));
+                // Ordenamos los procesos a ejecutar por orden del RESPONSE RATIO
+                Collections.sort(procesos, new Comparator<Proceso>() {
+                    @Override
+                    public int compare(Proceso p1, Proceso p2) {
+                        return new Long(p1.getResponseRatio()).compareTo(new Long(p2.getResponseRatio()));
+                    }
+                });
 
+                panel.removeAll();
+                for (Proceso proceso : procesos) {
+                    JLabel pr = new JLabel("Proceso: " + proceso.getPID() + ", Estado: " + proceso.getEstado());
+                    pr.setFont(new Font(pr.getFont().getName(), Font.PLAIN, 20));
+
+                    panel.add(pr);
+                }
                 if (corriendo) {
                     CPU_CLOCK++; // CONTADOR CICLOS CPU
                     cntProcesos.setText("Cantidad de procesos: " + configWindow.getPROCESSNUMBER());
-                    System.out.println("Clock speed:"
-                            + configWindow.getCICLESPEED());
-                    // Ordenamos los procesos a ejecutar por orden del RESPONSE RATIO
-                    Collections.sort(procesos, new Comparator<Proceso>() {
-                        @Override
-                        public int compare(Proceso p1, Proceso p2) {
-                            return new Long(p1.getResponseRatio()).compareTo(new Long(p2.getResponseRatio()));
-                        }
-                    });
-
-                    panel.removeAll();
-                    for (Proceso proceso : procesos) {
-                        JLabel pr = new JLabel("Proceso: " + proceso.getPID() + ", Estado: " + proceso.getEstado());
-                        pr.setFont(new Font(pr.getFont().getName(), Font.PLAIN, 20));
-
-                        panel.add(pr);
-                    }
-
+                    cntProcesosBloqueados.setText("Procesos Bloqueados: " + procesosBloqueados.size());
+                    velocidadP.setText("Velocidad de simulación: " + configWindow.getCICLESPEED());
                     CPU_LOCK_LABEL.setText("CICLO: " + CPU_CLOCK);
-                  
 
-                    if (procesoEjecutado != null) {
-                        System.out.println("Proceso usando CPU: " + procesoEjecutado.getPID());
+                    if (procesoEjecutado != null ) {
+                        //System.out.println("Proceso usando CPU: " + procesoEjecutado.getPID());
 
                         System.out.println("");
                         System.out.println("");
+
+                        System.out.println("size: " + procesos.size());
+                        System.out.println("contador: " + contador2);
+
 
                         if (!(procesoEjecutado.getEstado().equals("FINALIZADO"))) {
-                            procesoEjecutado.ejecutando(CPU_CLOCK);
-                        } else {
-                            contador++;
+                            if (!(procesoEjecutado.getEstado().equals("BLOQUEADO"))) {
+                                procesoEjecutado.ejecutando(CPU_CLOCK);
+                            } else if (contador2 != procesos.size()) {
+                                // procesos.remove(procesoEjecutado);
+                                procesosBloqueados.add(procesoEjecutado);
+                                procesoEjecutado = null;
+
+                                procesoEjecutado = procesos.get(contador2);
+
+                                contador2++;
+
+                            } else {
+                                // procesos.remove(procesoEjecutado);
+                                procesosBloqueados.add(procesoEjecutado);
+
+                                procesoEjecutado = null;
+
+                                System.out.println("TODOS LOS PROCESOS BLOQUEADOS");
+                            }
+
+                        } else if (procesoEjecutado.getEstado().equals("FINALIZADO")) {
+                            contador2++;
                             // procesos.remove(procesoEjecutado);
                             procesoEjecutado = null;
                             System.out.println("PROCESO FINALIZADO");
                             System.out.println("PREPARANDO SIGUIENTE PROCESO PARA EJECUTAR");
                             System.out.println("");
-                            System.out.println("SIGUIENTE PROCESO A EJECUTAR: " + procesos.get(contador).getPID());
-                            
-                            procesoEjecutado = procesos.get(contador); // Asignamos el siguiente proceso a ejecutar
+                            System.out.println("SIGUIENTE PROCESO A EJECUTAR: " + procesos.get(contador2).getPID());
+
+                            procesoEjecutado = procesos.get(contador2); // Asignamos el siguiente proceso a ejecutar
+
                         }
                     }
+                    if (procesosBloqueados != null) {
+                        // LOGICA DESBLOQUEAR
+                        for (Proceso procesoBloqueado : procesosBloqueados) {
+
+                            if (!(procesoBloqueado.getEstado().equals("PREPARADO"))
+                                    && (procesoBloqueado.getEstado().equals("BLOQUEADO"))) {
+                                System.out.println("DESBLOQUEANDO PROCESO: " + procesoBloqueado.getPID());
+
+                                procesoBloqueado.ejecutando(CPU_CLOCK); // "Ejecutamos" el proceso para que el
+                                                                        // tiempo de
+                                // bloqueo baje, una vez llegue a 0 su estado
+                                // será preparado.
+
+                            }
+                            if (procesoBloqueado.getEstado().equals("PREPARADO")) {
+                                nose = true;
+                                System.out.println("ELIMINANDO PROCESO BLOQUEADO: " + procesoBloqueado.getPID());
+                                // procesosBloqueados.remove(procesoBloqueado);
+                                // procesoBloqueado.setEstado("LISTOBLOQUEADO");
+                                if (procesoBloqueado.getEstado().equals("PREPARADO")) {
+                                   procesoBloqueado.setEstado("LISTO");
+                                   algoritmoHRRN(procesos);
+
+
+
+
+                                
+                                } else {
+                                    // procesoBloqueado.ejecutando(CPU_CLOCK); // "Ejecutamos" el proceso para que
+                                    // el
+                                    // tiempo de
+                                    // bloqueo baje, una vez llegue a 0 su estado
+                                    // será preparado.
+                                }
+
+                            }
+
+                        }
+                    } 
+                   
+                    repaint();
+
                 }
+
                 repaint();
+
             }
-            
+
         }, 0, configWindow.getCICLESPEED(), TimeUnit.MILLISECONDS);
     }
 
     private void init() {
         pn.setBorder(BorderFactory.createTitledBorder(blackline2, "procesos"));
-
-        pn.setBounds(0, 200, this.getWidth(), 200);
-        //pn.setBackground(Color.lightGray);
+        pn.setBounds(0, 200, this.getWidth() - 10, 200);
+        // pn.setBackground(Color.lightGray);
 
         pn.setBorder(new EmptyBorder(25, 25, 25, 35));
         pn.setLayout(new GridLayout(0, this.procesos.size(), 3, 3));
@@ -163,7 +231,6 @@ public class Planificador extends JFrame implements Runnable {
         for (Proceso proceso : procesos) {
             procesoPanel = new PanelProceso(proceso);
             pn.add(procesoPanel);
-
         }
     }
 
@@ -174,8 +241,9 @@ public class Planificador extends JFrame implements Runnable {
     // cuando este finaliza.cls
     private void cargarProcesos() {
         int contador = 0;
+        this.contador2 = 0;
         for (int i = 0; i < configWindow.getPROCESSNUMBER(); i++) {
-            Proceso p = new Proceso(contador, "LLEGADO", configWindow.getMaxBurst(), configWindow.getMaxRetardo(),
+            Proceso p = new Proceso(contador, "LISTO", configWindow.getMaxBurst(), configWindow.getMaxRetardo(),
                     configWindow.getMaxBloqueo());
             tiempoLlegada -= p.getTiempoRetraso();
             p.setTiempoLlegada(tiempoLlegada);
@@ -190,6 +258,7 @@ public class Planificador extends JFrame implements Runnable {
 
         this.procesoEjecutado = this.procesos.get(0); // Seteamos a fuego el primer proceso de la lista ya
                                                       // ordenada como ejectuando.
+        this.contador2++;
 
     }
 
@@ -200,13 +269,12 @@ public class Planificador extends JFrame implements Runnable {
             responseRatio = 0;
             responseRatio = (proceso.getTiempoLlegada() + proceso.gettBurst()) / proceso.gettBurst();
             proceso.setResponseRatio(responseRatio);
-            System.out.println("Response ratio: " + responseRatio);
+            // System.out.println("Response ratio: " + responseRatio);
         }
         return procesos;
     }
 
     private void initUI() {
-      
 
         // Process panel config
 
@@ -215,13 +283,13 @@ public class Planificador extends JFrame implements Runnable {
         // Information panel config
         infoPanel.setBounds(0, getWidth() / 2 - 150, this.getWidth(), 200);
 
-        //infoPanel.setBackground(Color.cyan);
+        // infoPanel.setBackground(Color.cyan);
         add(infoPanel);
         infoPanel.setLayout(null);
 
         // CPU information panel config
         cpuInfoPanel.setBounds(50, 10, 200, 100);
-        //cpuInfoPanel.setBackground(Color.pink);
+        // cpuInfoPanel.setBackground(Color.pink);
 
         // Cantidad Procesos label
         velocidadP = new JLabel("Velocidad de simulación: " + configWindow.getCICLESPEED());
@@ -260,13 +328,6 @@ public class Planificador extends JFrame implements Runnable {
         btnPlanificador = new JButton("Comenzar");
         btnPlanificador.setBounds(getHeight() - cpuInfoPanel.getWidth() + 50, 50, 100, 40);
         infoPanel.add(btnPlanificador);
-
-
-        // Button desbloquear
-        btnDesbloquear = new JButton("Desbloquear");
-        btnDesbloquear.setBounds(50, 10, 100, 40);
-        infoPanel.add(btnDesbloquear);
-
 
         btnPlanificador.setEnabled(false);
 
@@ -348,6 +409,7 @@ public class Planificador extends JFrame implements Runnable {
             @Override
             public void mouseReleased(MouseEvent e) {
                 // TODO Auto-generated method stub
+                configWindow.setup(); // Inicializamos ventana de configuracion
                 configWindow.setVisible(true);
                 btnPlanificador.setEnabled(true);
             }
@@ -381,21 +443,19 @@ public class Planificador extends JFrame implements Runnable {
         configWindow.addComponentListener(new ComponentAdapter() {
             public void componentShown(ComponentEvent evt) {
                 Component c = (Component) evt.getSource();
-                
+
             }
 
             public void componentHidden(ComponentEvent evt) {
-                
-                System.out.println("CICLE " +  configWindow.getCICLESPEED());
-                System.out.println("PROCESS " + configWindow.getPROCESSNUMBER());
-                System.out.println("brust " + configWindow.getMaxBurst());
-                System.out.println("bloqueo " + configWindow.getMaxBloqueo());
-                System.out.println("retardo " + configWindow.getMaxRetardo());
 
                 tiempoLlegada = configWindow.getPROCESSNUMBER();
 
                 cargarProcesos();
                 init();
+                repaint();
+                invalidate();
+                validate();
+                btnConfig.setEnabled(false);
 
             }
 
@@ -407,6 +467,8 @@ public class Planificador extends JFrame implements Runnable {
 
             }
         });
+
+        repaint();
     }
 
     public void setCICLESPEED(int cICLESPEED) {

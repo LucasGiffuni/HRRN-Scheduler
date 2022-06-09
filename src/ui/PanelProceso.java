@@ -137,6 +137,9 @@ public class PanelProceso extends JPanel {
         initBurstColor = (proceso.getEstado().equals("LLEGADO") ? Color.lightGray
                 : Color.lightGray);
 
+        initBurstColor = (proceso.getEstado().equals("BLOQUEADO") ? Color.lightGray
+                : Color.lightGray);
+
         burstColor = (proceso.getEstado().equals("LLEGADO"))
                 ? (proceso.getEstado().equals("EJECUTADO") == true ? Color.red
                         : Color.cyan)
@@ -163,6 +166,29 @@ public class PanelProceso extends JPanel {
             g.setColor(initBurstColor);
             g.drawRect(0, altura - initBurstHeight, width,
                     initBurstHeight);
+        } else if (proceso.getEstado().equals("BLOQUEADO")) {
+            g.setColor(Color.lightGray);
+            g.drawRect(0, altura - initBurstHeight, width,
+                    initBurstHeight);
+            g.setColor(Color.lightGray);
+            g.fillRect(1, altura - burstHeight + 1, width - 1,
+                    burstHeight - 1);
+        }
+        else if (proceso.getEstado().equals("PREPARADO")) {
+            g.setColor(Color.GREEN);
+            g.drawRect(0, altura - initBurstHeight, width,
+                    initBurstHeight);
+            g.setColor(Color.GREEN);
+            g.fillRect(1, altura - burstHeight + 1, width - 1,
+                    burstHeight - 1);
+        }
+        else if (proceso.getEstado().equals("PREPARADO")) {
+            g.setColor(Color.pink);
+            g.drawRect(0, altura - initBurstHeight, width,
+                    initBurstHeight);
+            g.setColor(Color.pink);
+            g.fillRect(1, altura - burstHeight + 1, width - 1,
+                    burstHeight - 1);
         }
 
     }
