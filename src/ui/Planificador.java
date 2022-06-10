@@ -59,11 +59,7 @@ public class Planificador extends JFrame implements Runnable {
     private boolean corriendo = false;
     private int contador2 = 0;
 
-
-
-
     int contadorbloq = 0;
-
 
     boolean nose = false;
 
@@ -116,7 +112,7 @@ public class Planificador extends JFrame implements Runnable {
                     JLabel pr = new JLabel("Proceso: " + proceso.getPID() + ", Estado: " + proceso.getEstado());
                     pr.setFont(new Font(pr.getFont().getName(), Font.PLAIN, 20));
 
-                    if(proceso.getEstado().equals("BLOQUEADO")){
+                    if (proceso.getEstado().equals("BLOQUEADO")) {
                         contadorbloq++;
                         cntProcesosBloqueados.setText("Procesos Bloqueados: " + contadorbloq);
 
@@ -147,23 +143,31 @@ public class Planificador extends JFrame implements Runnable {
                             } else {
                                 if (aux) {
                                     procesos = algoritmoHRRN(procesos);
-                                    
-                                    System.out.println("PROCESO VUELTO DE BLOQUEO, EL PROCESO "
-                                    + procesos.get(0) + " PUEDE SERA TOMADO");
-                                    System.out.println("PROCESOS ORDENADOS");
                                     Collections.sort(procesos, new Comparator<Proceso>() {
-                                        @Override
-                                        public int compare(Proceso p1, Proceso p2) {
-                                            return new Integer(p1.getResponseRatio()).compareTo(new Integer(p2.getResponseRatio()));
+                                        public int compare(Proceso o1, Proceso o2) {
+                                            if (o1.getResponseRatio() > o2.getResponseRatio()) {
+                                                return 1;
+                                            } else if (o1.getResponseRatio() < o2.getResponseRatio()) {
+                                                return -1;
+                                            } else {
+                                                return 0;
+                                            }
                                         }
                                     });
+                                    for (Proceso proceso : procesos) {
+
+                                        System.out.println("PID: " + proceso.getPID() + ",Response ratio "
+                                                + proceso.getResponseRatio());
+                                    }
+                                    System.out.println("PROCESO VUELTO DE BLOQUEO, EL PROCESO "
+                                            + procesos.get(0) + " PUEDE SERA TOMADO");
+                                    System.out.println("PROCESOS ORDENADOS");
+
                                     procesoEjecutado = null;
                                     procesoEjecutado = procesos.get(0);
-                                    //contador2 = 0;
-                                    //contador2++;
-                                    aux = false;
+
                                 } else {
-                                   
+
                                     procesoEjecutado = null;
                                     procesoEjecutado = procesos.get(contador2);
                                     System.out.println("NINGUN PROCESO LISTO DE BLOQUEO, EL PROCESO "
@@ -176,7 +180,7 @@ public class Planificador extends JFrame implements Runnable {
 
                         } else if (procesoEjecutado.getEstado().equals("FINALIZADO")) {
                             System.out.println("FINALIZO");
-                            
+
                             procesoEjecutado = null;
                             procesoEjecutado = procesos.get(contador2); // Asignamos el siguiente proceso a ejecutar
                             contador2++;
