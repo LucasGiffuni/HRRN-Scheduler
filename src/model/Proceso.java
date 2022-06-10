@@ -127,7 +127,8 @@ public class Proceso {
 
                 setEstado("BLOQUEADO");
 
-                boolBloqueado = true;
+                System.out.println("PROCESO " + PID + " BLOQUEADO");
+
             }
 
             // Se setea a listo el proceso
@@ -155,33 +156,16 @@ public class Proceso {
                 System.out.println("Tiempo burst: " + tBurst);
 
             }
-
-            if (tBurst <= 1) {
-                setEstado("FINALIZADO");
-                System.out.println("ESTADO PROCESO: " + getEstado());
-
-                tTermina = tiempoActual;
-                System.out.println("Tiempo finalizado: " + tTermina);
-
-            }
-            System.out.println("Tiempo vida: " + tTotalVida);
-
         } else if (getEstado().equals("BLOQUEADO")) {
 
             if (tBloqueoActual != 0) {
                 tBloqueoActual--;
                 System.out.println("Tiempo actual bloqueo: " + tBloqueoActual);
-                if (tBurst <= 1) {
-                    setEstado("FINALIZADO");
-                    System.out.println("ESTADO PROCESO: " + getEstado());
 
-                    tTermina = tiempoActual;
-                    System.out.println("Tiempo finalizado: " + tTermina);
-
-                }
             } else {
-                setEstado("LISTOBLOQ");
+                setEstado("LISTO");
                 tBloqueoActual = tBloqueo;
+                System.out.println("PROCESO " + PID + " DESBLOQUEADO");
             }
 
             tTotalVida++;
