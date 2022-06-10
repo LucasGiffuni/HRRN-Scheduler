@@ -98,7 +98,7 @@ public class ConfigWindow extends JFrame implements ChangeListener {
         processPanel.add(processNumber);
         t = new JTextField("", 16);
         processPanel.add(t);
-        t.setText("2");
+        t.setText("50");
 
         JLabel burst = new JLabel("Max Burst: ");
         processPanel.add(burst);

@@ -174,7 +174,8 @@ public class PanelProceso extends JPanel {
             g.fillRect(1, altura - burstHeight + 1, width - 1,
                     burstHeight - 1);
         }
-        else if (proceso.getEstado().equals("PREPARADO")) {
+       
+        else if (proceso.getEstado().equals("LISTO")) {
             g.setColor(Color.GREEN);
             g.drawRect(0, altura - initBurstHeight, width,
                     initBurstHeight);
@@ -183,10 +184,10 @@ public class PanelProceso extends JPanel {
                     burstHeight - 1);
         }
         else if (proceso.getEstado().equals("PREPARADO")) {
-            g.setColor(Color.pink);
+            g.setColor(Color.GREEN);
             g.drawRect(0, altura - initBurstHeight, width,
                     initBurstHeight);
-            g.setColor(Color.pink);
+            g.setColor(Color.GREEN);
             g.fillRect(1, altura - burstHeight + 1, width - 1,
                     burstHeight - 1);
         }
