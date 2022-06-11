@@ -143,6 +143,7 @@ public class Planificador extends JFrame implements Runnable {
                             procesoEjecutado = null;
                             procesoEjecutado = procesos.get(0);
 
+                            //nose
                         }
 
                     } else if (procesoEjecutado.getEstado().equals("FINALIZADO")) {
