@@ -3,26 +3,48 @@ package model;
 //Clase modelo de un proceso.
 public class Proceso {
 
-    int PID; // FINAL
+    int PID;
     String estado;
-    String modo;
-    int prioridad;
-    int tiempoEnEjecucion;
-    int tiempoEYS; // FINAL
-    int tiempoEspera;
+
+    int tInitBurst = 0;
+    int tBurst = 0;
+    int tBloqueo = 0;
+    int tBloqueoActual = 0;
+
+    int tLlegada = 0;
+    int tInicio = 0;
+
+    int tRespuesta = 0;
+    int tTotalVida = 0;
+    int tTermina = 0;
+    int tiempoRetraso = 0;
+    int tiempoLlegada = 0;
+    int responseRatio = 0;
+
+    private boolean boolBloqueado = false;
 
     public Proceso() {
     }
 
-    public Proceso(int pID, String estado, String modo, int prioridad, int tiempoEnEjecucion, int tiempoEYS,
-            int tiempoEspera) {
+    public Proceso(int pID, String estado, String maxBurst, String maxRetraso, String maxBloqueo) {
         PID = pID;
         this.estado = estado;
-        this.modo = modo;
-        this.prioridad = prioridad;
-        this.tiempoEnEjecucion = tiempoEnEjecucion;
-        this.tiempoEYS = tiempoEYS;
-        this.tiempoEspera = tiempoEspera;
+
+        tBurst = (int) (Math.random() * Integer.parseInt(maxBurst) + 1);
+
+        tiempoRetraso = (int) (Math.random() * Integer.parseInt(maxRetraso) / 2 + 1);
+
+        tBloqueo = (int) (Math.random() * tBurst + 1);
+        tBloqueoActual = tBloqueo; // Asignamos el tiempo random de bloqueo al tiempo de bloqueo actual
+        tInitBurst = tBurst;
+    }
+
+    public int getResponseRatio() {
+        return responseRatio;
+    }
+
+    public void setResponseRatio(int responseRatio) {
+        this.responseRatio = responseRatio;
     }
 
     public int getPID() {
@@ -37,49 +59,126 @@ public class Proceso {
         this.estado = estado;
     }
 
-    public String getModo() {
-        return modo;
+    public long gettInitBurst() {
+        return tInitBurst;
     }
 
-    public void setModo(String modo) {
-        this.modo = modo;
+    public void settInitBurst(int tInitBurst) {
+        this.tInitBurst = tInitBurst;
     }
 
-    public int getPrioridad() {
-        return prioridad;
+    public int gettBurst() {
+        return tBurst;
     }
 
-    public void setPrioridad(int prioridad) {
-        this.prioridad = prioridad;
+    public void settBurst(int tBurst) {
+        this.tBurst = tBurst;
     }
 
-    public int getTiempoEnEjecucion() {
-        return tiempoEnEjecucion;
+    public int getTiempoRetraso() {
+        return tiempoRetraso;
     }
 
-    public void setTiempoEnEjecucion(int tiempoEnEjecucion) {
-        this.tiempoEnEjecucion = tiempoEnEjecucion;
+    public void setTiempoRetraso(int tiempoRetraso) {
+        this.tiempoRetraso = tiempoRetraso;
     }
 
-    public int getTiempoEYS() {
-        return tiempoEYS;
+    public int getTiempoLlegada() {
+        return tiempoLlegada;
     }
 
-    public int getTiempoEspera() {
-        return tiempoEspera;
+    public void setTiempoLlegada(int tiempoLlegada) {
+        this.tiempoLlegada = tiempoLlegada;
     }
 
-    public void setTiempoEspera(int tiempoEspera) {
-        this.tiempoEspera = tiempoEspera;
+    @Override
+    public String toString() {
+        return "Proceso [PID=" + PID + ", estado=" + estado + ", responseRatio=" + responseRatio + ", tBurst=" + tBurst
+                + ", tInicio=" + tInicio + ", tInitBurst=" + tInitBurst + ", tLlegada=" + tLlegada + ", tRespuesta="
+                + tRespuesta + ", tTermina=" + tTermina + ", tTotalVida=" + tTotalVida + ", tiempoLlegada="
+                + tiempoLlegada + ", tiempoRetraso=" + tiempoRetraso + "]";
     }
 
-    // Método para bloquear y desbloquear estados.
-    public void BloquearDesbloquear() {
-        if (this.estado.equals("BLOQUEADO")) {
-            this.setEstado("LISTO");
-        } else {
-            this.setEstado("BLOQUEADO");
+    public synchronized void ejecutando(int tiempoActual) {
+
+        if (!(getEstado().equals("FINALIZADO")) && !(getEstado().equals("BLOQUEADO"))
+                && !(getEstado().equals("PREPARADO"))) {
+            System.out.println("ESTADO PROCESO: " + getEstado());
+            tTotalVida++;
+
+            System.out.println("");
+            System.out.println("");
+            System.out.println("##################################");
+            System.out.println("");
+            System.out.println("TIEMPO BLOQUEO: " + tBloqueo);
+            System.out.println("TIEMPO BLOQUEO ACTUAL: " + tBloqueoActual);
+            System.out.println("TIEMPO DE VIDA: " + tTotalVida);
+            System.out.println("");
+
+            System.out.println("ESTADO: " + estado);
+            System.out.println("");
+            System.out.println("##################################");
+            System.out.println("");
+            System.out.println("");
+
+            // Logica para bloquear
+            if ((tTotalVida % tBloqueoActual == 0)) {
+                System.out.println("BLOQUEANDO PROCESO POR E/S");
+
+                setEstado("BLOQUEADO");
+
+                System.out.println("PROCESO " + PID + " BLOQUEADO");
+
+            }
+
+            // Se setea a listo el proceso
+            if (tiempoActual == tLlegada) {
+                System.out.println("Proceso " + getPID() + " listo para ejecutar");
+                setEstado("LISTO");
+                System.out.println("ESTADO PROCESO: " + getEstado());
+            }
+
+            if (tBurst == tInitBurst) {
+                System.out.println("Proceso " + getPID() + " ejecutando");
+
+                setEstado("EJECUTADO");
+                System.out.println("ESTADO PROCESO: " + getEstado());
+
+                tInicio = tiempoActual;
+                tRespuesta = tInicio - tLlegada;
+                System.out.println("Tiempo Inicio: " + tInicio);
+                System.out.println("Tiempo Respuesta: " + tRespuesta);
+
+            }
+
+            if ((getEstado().equals("EJECUTADO"))) {
+                tBurst--;
+                System.out.println("Tiempo burst: " + tBurst);
+
+            }
+        } else if (getEstado().equals("BLOQUEADO")) {
+
+            if (tBloqueoActual != 0) {
+                tBloqueoActual--;
+                System.out.println("Tiempo actual bloqueo: " + tBloqueoActual);
+
+            } else {
+                setEstado("LISTO");
+                tBloqueoActual = tBloqueo;
+                System.out.println("PROCESO " + PID + " DESBLOQUEADO");
+            }
+
+            tTotalVida++;
         }
+        if (tBurst <= 1) {
+            setEstado("FINALIZADO");
+            System.out.println("ESTADO PROCESO: " + getEstado());
+
+            tTermina = tiempoActual;
+            System.out.println("Tiempo finalizado: " + tTermina);
+
+        }
+
     }
 
 }
