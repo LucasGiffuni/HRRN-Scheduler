@@ -21,7 +21,6 @@ public class Proceso {
     int tiempoLlegada = 0;
     int responseRatio = 0;
 
-    private boolean boolBloqueado = false;
 
     public Proceso() {
     }
@@ -34,7 +33,10 @@ public class Proceso {
 
         tiempoRetraso = (int) (Math.random() * Integer.parseInt(maxRetraso) / 2 + 1);
 
-        tBloqueo = (int) (Math.random() * tBurst + 1);
+        tBloqueo = 20;//(int) (Math.random() * tBurst + 1);
+        if (tBloqueo == 1) {
+            tBloqueo = tBloqueo + 2;
+        }
         tBloqueoActual = tBloqueo; // Asignamos el tiempo random de bloqueo al tiempo de bloqueo actual
         tInitBurst = tBurst;
     }
@@ -122,13 +124,17 @@ public class Proceso {
             System.out.println("");
 
             // Logica para bloquear
-            if ((tTotalVida % tBloqueoActual == 0)) {
+            if ((tTotalVida % tBloqueoActual == 0) && (tBloqueoActual != 1)) {
                 System.out.println("BLOQUEANDO PROCESO POR E/S");
 
                 setEstado("BLOQUEADO");
 
                 System.out.println("PROCESO " + PID + " BLOQUEADO");
 
+            }
+            
+            if (getEstado().equals("LISTO")) {
+                setEstado("EJECUTADO");
             }
 
             // Se setea a listo el proceso
