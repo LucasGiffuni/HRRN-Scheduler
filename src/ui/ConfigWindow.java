@@ -4,10 +4,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.beans.Visibility;
 import java.util.Hashtable;
 
+import javax.print.DocFlavor.STRING;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -23,7 +26,9 @@ public class ConfigWindow extends JFrame implements ChangeListener {
     private int CICLESPEED;
     private int PROCESSNUMBER;
 
-    private String maxBurst, maxRetardo, maxBloqueo;
+    private boolean BLOQ;
+
+    private String maxBurst, maxRetardo, maxBloqueo, STATICBLOQ;
 
     private Color cbloqueo, clisto, cejecutando;
     String[] colors = { "red", "green", "blue", "cyan", "light gray" };
@@ -40,6 +45,7 @@ public class ConfigWindow extends JFrame implements ChangeListener {
         setSize(750, 450);
         setResizable(false);
         getRootPane().setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.black));
+        setBLOQ(false);
 
         setLayout(null);
         setLocationRelativeTo(null);
@@ -149,10 +155,42 @@ public class ConfigWindow extends JFrame implements ChangeListener {
             }
         });
 
+        JCheckBox checkBox = new JCheckBox("Bloqueo Fijo", true);
+        statusPanel.add(checkBox);
+        checkBox.setSelected(false);
+
+        JTextField textFieldBloqueo = new JTextField("", 16);
+        textFieldBloqueo.setEnabled(false);
+        statusPanel.add(textFieldBloqueo);
+
+        checkBox.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+
+                if (checkBox.isSelected()) {
+                    textFieldBloqueo.setEnabled(true);
+                    textFieldBloqueo.setText("10");
+                    setBLOQ(true);
+
+                }
+
+                if (!checkBox.isSelected()) {
+
+                    textFieldBloqueo.setEnabled(false);
+                    textFieldBloqueo.setText("");
+                    setBLOQ(false);
+
+                }
+
+            }
+
+        });
+
         JLabel cBloqueo = new JLabel("Color Bloqueo: ");
-        statusPanel.add(cBloqueo);
+        // statusPanel.add(cBloqueo);
         JComboBox colorPicker1 = new JComboBox(colors);
-        statusPanel.add(colorPicker1);
+        // statusPanel.add(colorPicker1);
 
         JLabel cListo = new JLabel("Color Listo: ");
         statusPanel.add(cListo);
@@ -256,6 +294,7 @@ public class ConfigWindow extends JFrame implements ChangeListener {
                 maxBurst = t2.getText();
                 maxRetardo = t3.getText();
                 maxBloqueo = t4.getText();
+                STATICBLOQ = textFieldBloqueo.getText();
 
                 setVisible(false);
 
@@ -363,6 +402,22 @@ public class ConfigWindow extends JFrame implements ChangeListener {
 
     public void setMaxBloqueo(String maxBloqueo) {
         this.maxBloqueo = maxBloqueo;
+    }
+
+    public String getSTATICBLOQ() {
+        return STATICBLOQ;
+    }
+
+    public boolean isBLOQ() {
+        return BLOQ;
+    }
+
+    public void setSTATICBLOQ(String sTATICBLOQ) {
+        STATICBLOQ = sTATICBLOQ;
+    }
+
+    public void setBLOQ(boolean bLOQ) {
+        BLOQ = bLOQ;
     }
 
 }

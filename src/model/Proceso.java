@@ -22,18 +22,25 @@ public class Proceso {
     int responseRatio = 0;
 
 
+    boolean flag;
+
     public Proceso() {
     }
 
-    public Proceso(int pID, String estado, String maxBurst, String maxRetraso, String maxBloqueo) {
+    public Proceso(int pID, String estado, String maxBurst, String maxRetraso, String maxBloqueo, Boolean BLOQ, String STATICBLOQ) {
         PID = pID;
         this.estado = estado;
-
+        this.flag = false;
         tBurst = (int) (Math.random() * Integer.parseInt(maxBurst) + 1);
 
         tiempoRetraso = (int) (Math.random() * Integer.parseInt(maxRetraso) / 2 + 1);
 
-        tBloqueo = 20;//(int) (Math.random() * tBurst + 1);
+        if(BLOQ){
+            tBloqueo = Integer.parseInt(STATICBLOQ);
+        }else{
+            tBloqueo = (int) (Math.random() * tBurst + 1);
+        }
+       
         if (tBloqueo == 1) {
             tBloqueo = tBloqueo + 2;
         }
@@ -93,6 +100,16 @@ public class Proceso {
         this.tiempoLlegada = tiempoLlegada;
     }
 
+    public int gettTotalVida() {
+        return tTotalVida;
+    }
+
+    
+
+    public boolean isFlag() {
+        return flag;
+    }
+
     @Override
     public String toString() {
         return "Proceso [PID=" + PID + ", estado=" + estado + ", responseRatio=" + responseRatio + ", tBurst=" + tBurst
@@ -135,6 +152,7 @@ public class Proceso {
             
             if (getEstado().equals("LISTO")) {
                 setEstado("EJECUTADO");
+                flag = true;
             }
 
             // Se setea a listo el proceso
@@ -158,6 +176,7 @@ public class Proceso {
             }
 
             if ((getEstado().equals("EJECUTADO"))) {
+                flag = false;
                 tBurst--;
                 System.out.println("Tiempo burst: " + tBurst);
 
