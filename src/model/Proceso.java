@@ -168,7 +168,7 @@ public class Proceso {
             }
 
             if (getEstado().equals("LISTO")) {
-                setEstado("EJECUTADO");
+                setEstado("EJECUTANDO");
                 flag = true;
             }
 
@@ -182,7 +182,7 @@ public class Proceso {
             if (tBurst == tInitBurst) {
                 System.out.println("Proceso " + getPID() + " ejecutando");
 
-                setEstado("EJECUTADO");
+                setEstado("EJECUTANDO");
                 System.out.println("ESTADO PROCESO: " + getEstado());
 
                 tInicio = tiempoActual;
@@ -192,7 +192,7 @@ public class Proceso {
 
             }
 
-            if ((getEstado().equals("EJECUTADO"))) {
+            if ((getEstado().equals("EJECUTANDO"))) {
                 flag = false;
                 tBurst--;
                 System.out.println("Tiempo burst: " + tBurst);

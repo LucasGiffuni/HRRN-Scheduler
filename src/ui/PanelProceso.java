@@ -137,9 +137,9 @@ public class PanelProceso extends JPanel {
             lblColor = Color.BLACK;
         }
         pidLbl.setForeground(lblColor);
-        pidLbl.setBackground(proceso.getEstado().equals("EJECUTADO") ? Color.red : Color.black);
+        pidLbl.setBackground(proceso.getEstado().equals("EJECUTANDO") ? Color.red : Color.black);
 
-        if (proceso.getEstado().equals("EJECUTADO") && !proceso.getEstado().equals("FINALIZADO")) {
+        if (proceso.getEstado().equals("EJECUTANDO") && !proceso.getEstado().equals("FINALIZADO")) {
             g.setColor(Color.red);
             g.drawRect(0, altura - initBurstHeight, width,
                     initBurstHeight);

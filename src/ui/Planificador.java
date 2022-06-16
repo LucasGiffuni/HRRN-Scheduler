@@ -136,7 +136,7 @@ public class Planificador extends JFrame implements Runnable {
 
                     }
                     for (Proceso p : procesos) {
-                        if (p.getEstado().equals("EJECUTADO") && p != procesoEjecutado) {
+                        if (p.getEstado().equals("EJECUTANDO") && p != procesoEjecutado) {
                             p.setEstado("LISTO");
                         }
                     }
@@ -315,7 +315,7 @@ public class Planificador extends JFrame implements Runnable {
         referencePanel.add(p1);
 
         JPanel p2 = new JPanel();
-        JLabel l2 = new JLabel("EJECUTADO");
+        JLabel l2 = new JLabel("EJECUTANDO");
         p2.setBackground(Color.RED);
         p2.add(l2);
         referencePanel.add(p2);
