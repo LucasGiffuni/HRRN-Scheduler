@@ -131,15 +131,15 @@ public class PanelProceso extends JPanel {
         burstHeight = (int) proceso.gettBurst();
         width = (int) anchoProceso - 2;
 
-        lblColor = (proceso.getEstado().equals("LLEGADO") ? Color.black
-                : (showHidden ? Color.lightGray : Color.black));
-
-   
-
+        if (proceso.getTipo().equals("KERNEL")) {
+            lblColor = Color.PINK;
+        } else {
+            lblColor = Color.BLACK;
+        }
         pidLbl.setForeground(lblColor);
         pidLbl.setBackground(proceso.getEstado().equals("EJECUTADO") ? Color.red : Color.black);
 
-        if (proceso.getEstado().equals("EJECUTADO") && !proceso.getEstado().equals("FINALIZADO") ) {
+        if (proceso.getEstado().equals("EJECUTADO") && !proceso.getEstado().equals("FINALIZADO")) {
             g.setColor(Color.red);
             g.drawRect(0, altura - initBurstHeight, width,
                     initBurstHeight);
@@ -165,7 +165,7 @@ public class PanelProceso extends JPanel {
             g.fillRect(1, altura - burstHeight + 1, width - 1,
                     burstHeight - 1);
         }
-       
+
         else if (proceso.getEstado().equals("LISTO")) {
             g.setColor(Color.GREEN);
             g.drawRect(0, altura - initBurstHeight, width,
@@ -173,8 +173,7 @@ public class PanelProceso extends JPanel {
             g.setColor(Color.GREEN);
             g.fillRect(1, altura - burstHeight + 1, width - 1,
                     burstHeight - 1);
-        }
-        else if (proceso.getEstado().equals("PREPARADO")) {
+        } else if (proceso.getEstado().equals("PREPARADO")) {
             g.setColor(Color.GREEN);
             g.drawRect(0, altura - initBurstHeight, width,
                     initBurstHeight);

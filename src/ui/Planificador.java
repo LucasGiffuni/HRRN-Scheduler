@@ -273,7 +273,12 @@ public class Planificador extends JFrame implements Runnable {
             } else {
                 responseRatio = 0;
                 responseRatio = (proceso.getTiempoLlegada() + proceso.gettBurst()) / proceso.gettBurst();
-                proceso.setResponseRatio(responseRatio);
+                if (proceso.getTipo().equals("KERNEL")) {
+                    responseRatio += 3; // SI ES DE TIPO KERNEL SE LE BAJA LA PRIORIDAD
+                    proceso.setResponseRatio(responseRatio);
+                } else {
+                    proceso.setResponseRatio(responseRatio);
+                }
             }
         }
         ordenarLista();

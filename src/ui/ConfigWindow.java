@@ -157,10 +157,11 @@ public class ConfigWindow extends JFrame implements ChangeListener {
 
         JCheckBox checkBox = new JCheckBox("Bloqueo Fijo", true);
         statusPanel.add(checkBox);
-        checkBox.setSelected(false);
+        checkBox.setSelected(true);
 
         JTextField textFieldBloqueo = new JTextField("", 16);
-        textFieldBloqueo.setEnabled(false);
+        textFieldBloqueo.setEnabled(true);
+        textFieldBloqueo.setText("10");
         statusPanel.add(textFieldBloqueo);
 
         checkBox.addItemListener(new ItemListener() {

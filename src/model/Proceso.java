@@ -21,13 +21,16 @@ public class Proceso {
     int tiempoLlegada = 0;
     int responseRatio = 0;
 
+    String tipo;
 
     boolean flag;
 
     public Proceso() {
     }
 
-    public Proceso(int pID, String estado, String maxBurst, String maxRetraso, String maxBloqueo, Boolean BLOQ, String STATICBLOQ) {
+    public Proceso(int pID, String estado, String maxBurst, String maxRetraso, String maxBloqueo, Boolean BLOQ,
+            String STATICBLOQ) {
+        int tipoAux;
         PID = pID;
         this.estado = estado;
         this.flag = false;
@@ -35,12 +38,22 @@ public class Proceso {
 
         tiempoRetraso = (int) (Math.random() * Integer.parseInt(maxRetraso) / 2 + 1);
 
-        if(BLOQ){
+        if (BLOQ) {
             tBloqueo = Integer.parseInt(STATICBLOQ);
-        }else{
+        } else {
             tBloqueo = (int) (Math.random() * tBurst + 1);
         }
-       
+
+        tipoAux = (int) (Math.random() * 3 + 1);
+
+        if(tipoAux == 1){
+            this.tipo = "KERNEL";
+        }else{
+            this.tipo = "USUARIO";
+        }
+
+        System.out.println(this.tipo);
+
         if (tBloqueo == 1) {
             tBloqueo = tBloqueo + 2;
         }
@@ -104,18 +117,22 @@ public class Proceso {
         return tTotalVida;
     }
 
-    
-
     public boolean isFlag() {
         return flag;
     }
 
+    
+    
+
+    public String getTipo() {
+        return tipo;
+    }
+
     @Override
     public String toString() {
-        return "Proceso [PID=" + PID + ", estado=" + estado + ", responseRatio=" + responseRatio + ", tBurst=" + tBurst
-                + ", tInicio=" + tInicio + ", tInitBurst=" + tInitBurst + ", tLlegada=" + tLlegada + ", tRespuesta="
-                + tRespuesta + ", tTermina=" + tTermina + ", tTotalVida=" + tTotalVida + ", tiempoLlegada="
-                + tiempoLlegada + ", tiempoRetraso=" + tiempoRetraso + "]";
+        return "Proceso [PID=" + PID + ", estado=" + estado + ", responseRatio=" + responseRatio + ", tBloqueo="
+                + tBloqueo + ", tBurst=" + tBurst + ", tRespuesta=" + tRespuesta + ", tTotalVida=" + tTotalVida
+                + ", tiempoLlegada=" + tiempoLlegada + ", tiempoRetraso=" + tiempoRetraso + ", tipo=" + tipo + "]";
     }
 
     public synchronized void ejecutando(int tiempoActual) {
@@ -149,7 +166,7 @@ public class Proceso {
                 System.out.println("PROCESO " + PID + " BLOQUEADO");
 
             }
-            
+
             if (getEstado().equals("LISTO")) {
                 setEstado("EJECUTADO");
                 flag = true;
