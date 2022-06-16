@@ -53,7 +53,6 @@ public class ConfigWindow extends JFrame implements ChangeListener {
         setVisible(true);
         JPanel panel = new JPanel();
         panel.setSize(this.getSize());
-        panel.setBackground(Color.pink);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         JLabel cicleSpeed = new JLabel("Velocidad de simulación en milisegundos = " + "50");
@@ -64,15 +63,12 @@ public class ConfigWindow extends JFrame implements ChangeListener {
 
         JPanel processPanel = new JPanel();
         processPanel.setLayout(new GridLayout(4, 2));
-        processPanel.setBackground(Color.pink);
 
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new GridLayout(3, 2));
-        statusPanel.setBackground(Color.pink);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(1, 1));
-        buttonPanel.setBackground(Color.pink);
 
         b = new JSlider(0, 2000, 1000);
         b.setPreferredSize(new Dimension(600, 50));
@@ -89,6 +85,8 @@ public class ConfigWindow extends JFrame implements ChangeListener {
         b.setPaintTicks(true);
         b.setPaintLabels(true);
 
+
+      
         b.setLabelTable(position);
         sliderPanel.add(b);
         panel.add(sliderPanel);
@@ -187,98 +185,20 @@ public class ConfigWindow extends JFrame implements ChangeListener {
             }
 
         });
+       
 
-        JLabel cBloqueo = new JLabel("Color Bloqueo: ");
-        // statusPanel.add(cBloqueo);
-        JComboBox colorPicker1 = new JComboBox(colors);
-        // statusPanel.add(colorPicker1);
-
-        JLabel cListo = new JLabel("Color Listo: ");
+        JPanel cListo = new JPanel();
         statusPanel.add(cListo);
-        JComboBox colorPicker2 = new JComboBox(colors);
+        JPanel colorPicker2 = new JPanel();
         statusPanel.add(colorPicker2);
 
-        JLabel cEjecutando = new JLabel("Color Ejecutando: ");
+        JPanel cEjecutando = new JPanel();
         statusPanel.add(cEjecutando);
-        JComboBox colorPicker3 = new JComboBox(colors);
+        JPanel colorPicker3 = new JPanel();
         statusPanel.add(colorPicker3);
 
         buttonPanel.add(botonFinalzar);
-        colorPicker1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                switch (colorPicker1.getSelectedItem().toString()) {
-                    case "red":
-                        cbloqueo = Color.red;
-                        break;
-                    case "green":
-                        cbloqueo = Color.green;
-                        break;
-                    case "blue":
-                        cbloqueo = Color.blue;
-                        break;
-                    case "cyan":
-                        cbloqueo = Color.cyan;
-                        break;
-                    case "light gray":
-                        cbloqueo = Color.lightGray;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-        });
-        colorPicker2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                switch (colorPicker2.getSelectedItem().toString()) {
-                    case "red":
-                        clisto = Color.red;
-                        break;
-                    case "green":
-                        clisto = Color.green;
-                        break;
-                    case "blue":
-                        clisto = Color.blue;
-                        break;
-                    case "cyan":
-                        clisto = Color.cyan;
-                        break;
-                    case "light gray":
-                        clisto = Color.lightGray;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-        });
-        colorPicker2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                switch (colorPicker3.getSelectedItem().toString()) {
-                    case "red":
-                        cejecutando = Color.red;
-                        break;
-                    case "green":
-                        cejecutando = Color.green;
-                        break;
-                    case "blue":
-                        cejecutando = Color.blue;
-                        break;
-                    case "cyan":
-                        cejecutando = Color.cyan;
-                        break;
-                    case "light gray":
-                        cejecutando = Color.lightGray;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-        });
+      
 
         botonFinalzar.addMouseListener(new MouseInputListener() {
 
