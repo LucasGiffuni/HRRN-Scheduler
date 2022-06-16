@@ -146,7 +146,7 @@ public class PanelProceso extends JPanel {
             g.setColor(Color.red);
             g.fillRect(1, altura - burstHeight + 1, width - 1,
                     burstHeight - 1);
-        } else if (proceso.getEstado().equals("LLEGADO")) {
+        } else if (proceso.getEstado().equals("NUEVO")) {
             g.setColor(Color.cyan);
             g.drawRect(0, altura - initBurstHeight, width,
                     initBurstHeight);

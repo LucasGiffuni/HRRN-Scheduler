@@ -232,7 +232,7 @@ public class Planificador extends JFrame implements Runnable {
         int contador = 0;
         this.contador2 = 0;
         for (int i = 0; i < configWindow.getPROCESSNUMBER(); i++) {
-            Proceso p = new Proceso(contador, "LLEGADO", configWindow.getMaxBurst(), configWindow.getMaxRetardo(),
+            Proceso p = new Proceso(contador, "NUEVO", configWindow.getMaxBurst(), configWindow.getMaxRetardo(),
                     configWindow.getMaxBloqueo(), configWindow.isBLOQ(), configWindow.getSTATICBLOQ());
             tiempoLlegada -= p.getTiempoRetraso();
             p.setTiempoLlegada(tiempoLlegada);
@@ -309,7 +309,7 @@ public class Planificador extends JFrame implements Runnable {
         referencePanel.setBounds(50, 125, 500, 50);
         referencePanel.setLayout(new GridLayout(1, 4));
         JPanel p1 = new JPanel();
-        JLabel l1 = new JLabel("LLEGADO");
+        JLabel l1 = new JLabel("NUEVO");
         p1.setBackground(Color.CYAN);
         p1.add(l1);
         referencePanel.add(p1);
