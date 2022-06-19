@@ -41,18 +41,20 @@ public class Proceso {
         if (BLOQ) {
             tBloqueo = Integer.parseInt(STATICBLOQ);
         } else {
-            tBloqueo = (int) (Math.random() * tBurst + 1);
+            tBloqueo = (int) (Math.random() * (100 - 5)) + 5;
+
+            // tBloqueo = (int) (Math.random() * tBurst + 1);
         }
 
         tipoAux = (int) (Math.random() * 3 + 1);
 
-        if(tipoAux == 1){
+        if (tipoAux == 1) {
             this.tipo = "KERNEL";
-        }else{
+        } else {
             this.tipo = "USUARIO";
         }
 
-        System.out.println(this.tipo);
+        // System.out.println(this.tipo);
 
         if (tBloqueo == 1) {
             tBloqueo = tBloqueo + 2;
@@ -121,9 +123,6 @@ public class Proceso {
         return flag;
     }
 
-    
-    
-
     public String getTipo() {
         return tipo;
     }
@@ -135,28 +134,32 @@ public class Proceso {
                 + ", tiempoLlegada=" + tiempoLlegada + ", tiempoRetraso=" + tiempoRetraso + ", tipo=" + tipo + "]";
     }
 
+
+    
+
     public synchronized void ejecutando(int tiempoActual) {
 
         if (!(getEstado().equals("FINALIZADO")) && !(getEstado().equals("BLOQUEADO"))
                 && !(getEstado().equals("PREPARADO"))) {
-            System.out.println("ESTADO PROCESO: " + getEstado());
+
+            // System.out.println("ESTADO PROCESO: " + getEstado());
             tTotalVida++;
-
-            System.out.println("");
-            System.out.println("");
-            System.out.println("##################################");
-            System.out.println("");
-            System.out.println("TIEMPO BLOQUEO: " + tBloqueo);
-            System.out.println("TIEMPO BLOQUEO ACTUAL: " + tBloqueoActual);
-            System.out.println("TIEMPO DE VIDA: " + tTotalVida);
-            System.out.println("");
-
-            System.out.println("ESTADO: " + estado);
-            System.out.println("");
-            System.out.println("##################################");
-            System.out.println("");
-            System.out.println("");
-
+            /*
+             * System.out.println("");
+             * System.out.println("");
+             * System.out.println("##################################");
+             * System.out.println("");
+             * System.out.println("TIEMPO BLOQUEO: " + tBloqueo);
+             * System.out.println("TIEMPO BLOQUEO ACTUAL: " + tBloqueoActual);
+             * System.out.println("TIEMPO DE VIDA: " + tTotalVida);
+             * System.out.println("");
+             * 
+             * System.out.println("ESTADO: " + estado);
+             * System.out.println("");
+             * System.out.println("##################################");
+             * System.out.println("");
+             * System.out.println("");
+             */
             // Logica para bloquear
             if ((tTotalVida % tBloqueoActual == 0) && (tBloqueoActual != 1)) {
                 System.out.println("BLOQUEANDO PROCESO POR E/S");
@@ -174,50 +177,50 @@ public class Proceso {
 
             // Se setea a listo el proceso
             if (tiempoActual == tLlegada) {
-                System.out.println("Proceso " + getPID() + " listo para ejecutar");
+                // System.out.println("Proceso " + getPID() + " listo para ejecutar");
                 setEstado("LISTO");
-                System.out.println("ESTADO PROCESO: " + getEstado());
+                // System.out.println("ESTADO PROCESO: " + getEstado());
             }
 
             if (tBurst == tInitBurst) {
-                System.out.println("Proceso " + getPID() + " ejecutando");
+                // System.out.println("Proceso " + getPID() + " ejecutando");
 
                 setEstado("EJECUTANDO");
-                System.out.println("ESTADO PROCESO: " + getEstado());
+                // System.out.println("ESTADO PROCESO: " + getEstado());
 
                 tInicio = tiempoActual;
                 tRespuesta = tInicio - tLlegada;
-                System.out.println("Tiempo Inicio: " + tInicio);
-                System.out.println("Tiempo Respuesta: " + tRespuesta);
+                // System.out.println("Tiempo Inicio: " + tInicio);
+                // System.out.println("Tiempo Respuesta: " + tRespuesta);
 
             }
 
             if ((getEstado().equals("EJECUTANDO"))) {
                 flag = false;
                 tBurst--;
-                System.out.println("Tiempo burst: " + tBurst);
+                // System.out.println("Tiempo burst: " + tBurst);
 
             }
         } else if (getEstado().equals("BLOQUEADO")) {
 
             if (tBloqueoActual != 0) {
                 tBloqueoActual--;
-                System.out.println("Tiempo actual bloqueo: " + tBloqueoActual);
+                // System.out.println("Tiempo actual bloqueo: " + tBloqueoActual);
 
             } else {
                 setEstado("LISTO");
                 tBloqueoActual = tBloqueo;
-                System.out.println("PROCESO " + PID + " DESBLOQUEADO");
+                // System.out.println("PROCESO " + PID + " DESBLOQUEADO");
             }
 
             tTotalVida++;
         }
         if (tBurst <= 1) {
             setEstado("FINALIZADO");
-            System.out.println("ESTADO PROCESO: " + getEstado());
+            // System.out.println("ESTADO PROCESO: " + getEstado());
 
             tTermina = tiempoActual;
-            System.out.println("Tiempo finalizado: " + tTermina);
+            // System.out.println("Tiempo finalizado: " + tTermina);
 
         }
 

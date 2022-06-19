@@ -110,17 +110,12 @@ public class ConfigWindow extends JFrame implements ChangeListener {
         processPanel.add(t2);
         t2.setText("99");
 
-        JLabel retraso = new JLabel("Max Retraso: ");
-        processPanel.add(retraso);
-        JTextField t3 = new JTextField("", 16);
-        processPanel.add(t3);
-        t3.setText("50");
-
-        JLabel bloqueo = new JLabel("Max Bloqueo: ");
+      
+        JPanel bloqueo = new JPanel();
         processPanel.add(bloqueo);
-        JTextField t4 = new JTextField("", 16);
+        JPanel t4 = new JPanel();
         processPanel.add(t4);
-        t4.setText("10");
+        
 
         setCICLESPEED(50);
         t.addActionListener(new ActionListener() {
@@ -138,28 +133,14 @@ public class ConfigWindow extends JFrame implements ChangeListener {
                 setMaxBurst(t2.getText());
             }
         });
-        t3.addActionListener(new ActionListener() {
-            // capture the event on JTextField
-            public void actionPerformed(ActionEvent e) {
-                // get and display the contents of JTextField in the console
-                setMaxRetardo(t3.getText());
-            }
-        });
-        t4.addActionListener(new ActionListener() {
-            // capture the event on JTextField
-            public void actionPerformed(ActionEvent e) {
-                // get and display the contents of JTextField in the console
-                setMaxBloqueo(t4.getText());
-            }
-        });
+        
 
         JCheckBox checkBox = new JCheckBox("Bloqueo Fijo", true);
         statusPanel.add(checkBox);
-        checkBox.setSelected(true);
+        checkBox.setSelected(false);
 
         JTextField textFieldBloqueo = new JTextField("", 16);
-        textFieldBloqueo.setEnabled(true);
-        textFieldBloqueo.setText("10");
+        textFieldBloqueo.setEnabled(false);
         statusPanel.add(textFieldBloqueo);
 
         checkBox.addItemListener(new ItemListener() {
@@ -213,8 +194,8 @@ public class ConfigWindow extends JFrame implements ChangeListener {
 
                 PROCESSNUMBER = Integer.parseInt(t.getText());
                 maxBurst = t2.getText();
-                maxRetardo = t3.getText();
-                maxBloqueo = t4.getText();
+                maxRetardo = "50";
+                maxBloqueo = "10";
                 STATICBLOQ = textFieldBloqueo.getText();
 
                 setVisible(false);

@@ -131,10 +131,7 @@ public class Planificador extends JFrame implements Runnable {
                 contadorProcesos = 0;
                 if (corriendo) {
 
-                    for (Proceso p : procesosBloqueados) {
-                        System.out.println(p);
-
-                    }
+                 
                     for (Proceso p : procesos) {
                         if (p.getEstado().equals("EJECUTANDO") && p != procesoEjecutado) {
                             p.setEstado("LISTO");
@@ -282,10 +279,7 @@ public class Planificador extends JFrame implements Runnable {
             }
         }
         ordenarLista();
-        for (Proceso p : aux) {
-            System.out.println("PID " + p.getPID() + " Ratio: " + p.getResponseRatio());
-
-        }
+      
 
         return aux;
     }
