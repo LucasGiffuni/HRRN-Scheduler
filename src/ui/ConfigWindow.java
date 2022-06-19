@@ -129,7 +129,6 @@ public class ConfigWindow extends JFrame implements ChangeListener {
         t2.addActionListener(new ActionListener() {
             // capture the event on JTextField
             public void actionPerformed(ActionEvent e) {
-                // get and display the contents of JTextField in the console
                 setMaxBurst(t2.getText());
             }
         });
