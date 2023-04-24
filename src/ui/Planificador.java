@@ -75,7 +75,7 @@ public class Planificador extends JFrame implements Runnable {
 
     public Planificador() {
 
-        setTitle("Planificador UCU");
+        setTitle("HRRN SCHEDULER");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLayout(null);
         setLocationRelativeTo(null);

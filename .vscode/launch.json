@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Planificador",
+            "request": "launch",
+            "mainClass": "ui.Planificador",
+            "projectName": "PlanificadorUCU_814f6e21"
+        },
+        {
+            "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}"
